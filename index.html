@@ -176,12 +176,17 @@
           const data = {
             name: nameUser,
             message: input.value,
-            image: `${preview.src}`
+            image: `${preview.src}`,
           }
           
           socket.emit('message', data);
           var item = document.createElement('li');
-          item.innerHTML = `<img src="${preview.src}" class="w-10 h-10 rounded-ful"> pesan: ${input.value}`;
+          item.innerHTML = `
+            <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+              <p class="text-lg">${data.name}</p>
+              <p>${data.message}</p>
+            </div> 
+          `;
           messageUser.appendChild(item);
           
           input.value = '';
@@ -191,8 +196,14 @@
 
       socket.on("message", (name, message, image) => {
         let broadcast = document.createElement("li");
-        broadcast.innerHTML = `<img src="${image}" class="w-10 h-10 rounded-full" >*(${name}) pesan: ${message}`;
-        broadcast.classList.add("float-right")
+        broadcast.innerHTML = `
+        <div class="float-right">
+          <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+            <p class="text-lg">${name}</p>
+            <p>${message}</p>
+          </div> 
+        </div>
+        `;
         messageUser.appendChild(broadcast);
       })
 
@@ -203,9 +214,6 @@
         const container = document.querySelector(".name");
         container.appendChild(statusP);
       }); 
-
-      
-
   </script>
 
 </body>
