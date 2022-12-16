@@ -11,15 +11,15 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+
   socket.on('disconnect', (value) => {
     console.log('user disconnected');
   });
 
   socket.on('message', (data) => {
-    const { id, message } = data;
-    socket.broadcast.emit('message', id, message);
+    const { name, message, image } = data;
+    socket.broadcast.emit('message', name, message, image);
   });
-
 });
 
 server.listen(3000, () => {

@@ -24,7 +24,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    #form {
+    #form_chat {
       background: rgba(0, 0, 0, 0.15);
       padding: 0.25rem;
       position: fixed;
@@ -49,7 +49,7 @@
       outline: none;
     }
 
-    #form>button {
+    #form_chat>button {
       background: #333;
       border: none;
       padding: 0 1rem;
@@ -75,59 +75,138 @@
   </style>
 </head>
 <body>
-  <section class="name flex" >
-    <input type="text" class="input-name bg-slate-200" >
-    <button id="enter-name " class="bg-pink-500 px-4 py-2 text-white">enter</button>
-  </section>
+  <div id="home_page"class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#0d9488" class="bi bi-chat-dots-fill mx-auto h-12 w-auto"
+          viewBox="0 0 16 16">
+          <path
+            d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+        </svg>
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Emore Chat</h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+          real time chat app based on socket
+        </p>
+      </div>
+      <form class="mt-8 space-y-6" id="form_name">
+        <input type="hidden" name="remember" value="true">
+        <div class="-space-y-px rounded-md shadow-sm  ">
+          <div class="flex items-center mb-2 justify-center ">
+            <img src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" alt="profile" id="preview-profile"
+              class="w-20 h-20 rounded-full mr-2" />
+            <label for="profile"
+              class="text-white bg-teal-600  font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload"
+                viewBox="0 0 16 16">
+                <path
+                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                <path
+                  d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
+              </svg> &nbsp; Upload Profile
+            </label>
+            <input id="profile" type="file" accept="image/*" class="hidden">
+          </div>
+          <div>
+            <label for="email-address" class="sr-only">Nickname</label>
+            <input id="input-name" name="name" type="text" autocomplete="name" required
+              class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+              placeholder="Nickname">
+          </div>
+          
+        </div>
+        <div>
+          <button type="submit" id="btn-name"
+            class="group relative flex w-full justify-center rounded-md border border-transparent bg-teal-600 py-2 px-4 text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+            Join
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  <ul id="messages"></ul>
-  <form id="form" action="" >
-    <input id="input" autocomplete="off" /><button>Send</button>
-  </form>
+  <section id="chat_page" class="hidden">
+    <div class="name"></div>
+    <ul id="messages"></ul>
+    <form id="form_chat" action="" >
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+  </section>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     var socket = io();
-    var form = document.getElementById('form');
+    var formChat = document.getElementById('form_chat');
     var input = document.getElementById('input');
     var messageUser = document.getElementById("messages");
     // name
-      const status = document.querySelector(".status");
-      const inputName = document.querySelector(".input-name");
-      const btnName = document.getElementById("enter-name");
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
+    const status = document.querySelector(".status");
+    const inputName = document.querySelector("#input-name");
+    const btnName = document.querySelector("#btn-name")
+
+    const formName = document.getElementById("form_name")
+
+    console.log(btnName)
+
+    let nameUser = "";
+
+    formName.addEventListener("submit", (e) => {
+      e.preventDefault()
+      if(inputName.value !== "") {
+        const chatPage = document.getElementById("chat_page");
+        const homePage = document.getElementById("home_page");
+        chatPage.classList.remove("hidden");
+        homePage.classList.add("hidden");
+        nameUser = inputName.value;
+      } 
+    });
+
+    const preview = document.getElementById("preview-profile");
+    
+    document.getElementById("profile").addEventListener("change", function () {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        preview.src = reader.result;
+      })
+      reader.readAsDataURL(this.files[0])
+    })
+
+    formChat.addEventListener('submit', function (e) {
+      e.preventDefault();
         if (input.value) {
           const data = {
-            id: socket.id,
-            message: input.value
+            name: nameUser,
+            message: input.value,
+            image: `${preview.src}`
           }
+          
           socket.emit('message', data);
           var item = document.createElement('li');
-          item.textContent = input.value;
+          item.innerHTML = `<img src="${preview.src}" class="w-10 h-10 rounded-ful"> pesan: ${input.value}`;
           messageUser.appendChild(item);
           
           input.value = '';
         }
-      });
+    });
 
-      socket.on("message", (id, message) => {
+
+      socket.on("message", (name, message, image) => {
         let broadcast = document.createElement("li");
-        broadcast.textContent = `*(${id}) pesan: ${message}`;
-        broadcast.style.textAlign = "right";
+        broadcast.innerHTML = `<img src="${image}" class="w-10 h-10 rounded-full" >*(${name}) pesan: ${message}`;
+        broadcast.classList.add("float-right")
         messageUser.appendChild(broadcast);
       })
 
       socket.on('connect', () => {
-        console.log("user connected");
         let statusP = document.createElement("p");
         statusP.textContent = "user connected";
 
         const container = document.querySelector(".name");
         container.appendChild(statusP);
-      });
+      }); 
+
       
-      
+
   </script>
+
 </body>
 </html>

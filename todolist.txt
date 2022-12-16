@@ -1,5 +1,5 @@
 Broadcast a message to connected users when someone connects or disconnects.
-- io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' })
+
 Add support for nicknames.
 
 Don’t send the same message to the user that sent it. Instead, append the message directly as soon as he/she presses enter.
