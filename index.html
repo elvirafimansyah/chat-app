@@ -69,9 +69,7 @@
       padding: 0.5rem 1rem;
     }
 
-    #messages>li:nth-child(odd) {
-      background: #efefef;
-    }
+    
   </style>
 </head>
 <body>
@@ -173,22 +171,29 @@
     formChat.addEventListener('submit', function (e) {
       e.preventDefault();
         if (input.value) {
+          const time = new Date()
           const data = {
             name: nameUser,
             message: input.value,
             image: `${preview.src}`,
+            hour: time.getHours(),
+            minutes: time.getMinutes()
           }
-          
           socket.emit('message', data);
           var item = document.createElement('li');
           item.innerHTML = `
+          <div class="flex items-center">
             <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-              <p class="text-lg">${data.name}</p>
+              <div class="flex items-center">
+                <p class="text-lg font-medium">${data.name}</p>
+                <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+              </div>
               <p>${data.message}</p>
             </div> 
+          <div>
           `;
           messageUser.appendChild(item);
-          
+          window.scrollTo(0, document.body.scrollHeight);
           input.value = '';
         }
     });
@@ -197,14 +202,15 @@
       socket.on("message", (name, message, image) => {
         let broadcast = document.createElement("li");
         broadcast.innerHTML = `
-        <div class="float-right">
-          <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+        <div class="flex items-center">
+          <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div >
             <p class="text-lg">${name}</p>
             <p>${message}</p>
-          </div> 
-        </div>
+          </div>
+        <div> 
         `;
         messageUser.appendChild(broadcast);
+        window.scrollTo(0, document.body.scrollHeight);
       })
 
       socket.on('connect', () => {

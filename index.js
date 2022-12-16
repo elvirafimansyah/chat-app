@@ -17,8 +17,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('message', (data) => {
-    const { name, message, image } = data;
-    socket.broadcast.emit('message', name, message, image);
+    const { name, message, image, time } = data;
+    socket.broadcast.emit('message', name, message, image, time);
   });
 });
 
