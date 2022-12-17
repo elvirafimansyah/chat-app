@@ -23,53 +23,19 @@
       padding-bottom: 3rem;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-
-    #form_chat {
-      background: rgba(0, 0, 0, 0.15);
-      padding: 0.25rem;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      height: 3rem;
-      box-sizing: border-box;
-      backdrop-filter: blur(10px);
+    /* Custom Scroll Bar */
+    /* width */
+    ::-webkit-scrollbar {
+      width: 10px;
     }
-
-    #input {
-      border: none;
-      padding: 0 1rem;
-      flex-grow: 1;
-      border-radius: 2rem;
-      margin: 0.25rem;
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: teal; 
+      border-radius: 8px;
     }
-
-    #input:focus {
-      outline: none;
-    }
-
-    #form_chat>button {
-      background: #333;
-      border: none;
-      padding: 0 1rem;
-      margin: 0.25rem;
-      border-radius: 3px;
-      outline: none;
-      color: #fff;
-    }
-
-    #messages {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
     #messages>li {
       padding: 0.5rem 1rem;
     }
-
-    
   </style>
 </head>
 <body>
@@ -124,9 +90,44 @@
 
   <section id="chat_page" class="hidden">
     <div class="name"></div>
-    <ul id="messages"></ul>
-    <form id="form_chat" action="" >
-      <input id="input" autocomplete="off" /><button>Send</button>
+    <ul id="messages" class="list-none m-0 p-0"></ul>
+    <form  id="form_chat"class="fixed bottom-0 left-0 right-0 box-border z-99 shadow-lg">
+      <label for="chat" class="sr-only">Your message</label>
+      <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 ">
+        <button type="button"
+          class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+          <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Upload image</span>
+        </button>
+        <button type="button"
+          class="p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 ">
+          <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Add emoji</span>
+        </button>
+        <input id="chat"  
+          class="block mx-4 p-2.5 w-full break-words	 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 "
+          placeholder="Your message...">
+        <button type="submit"
+          class="inline-flex justify-center p-2 text-teal-600 rounded-full cursor-pointer hover:bg-teal-50">
+          <svg aria-hidden="true" class="w-6 h-6 rotate-90" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
+            </path>
+          </svg>
+          <span class="sr-only">Send message</span>
+        </button>
+      </div>
     </form>
   </section>
 
@@ -134,7 +135,7 @@
   <script>
     var socket = io();
     var formChat = document.getElementById('form_chat');
-    var input = document.getElementById('input');
+    var input = document.getElementById('chat');
     var messageUser = document.getElementById("messages");
     // name
     const status = document.querySelector(".status");
@@ -172,23 +173,34 @@
       e.preventDefault();
         if (input.value) {
           const time = new Date()
+          let timeStatus = ""
+
+          if (time.getHours() > 12) {
+            timeStatus = "PM"
+          } else {
+            timeStatus = "AM"
+          }
+
           const data = {
             name: nameUser,
             message: input.value,
             image: `${preview.src}`,
             hour: time.getHours(),
-            minutes: time.getMinutes()
+            minutes: time.getMinutes(),
+            info_time: timeStatus
           }
           socket.emit('message', data);
           var item = document.createElement('li');
           item.innerHTML = `
-          <div class="flex items-center">
+          <div class="flex items-center ">
             <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-              <div class="flex items-center">
-                <p class="text-lg font-medium">${data.name}</p>
+              <div class="flex items-center ">
+                <p class="text-lg font-medium">${data.name}</p>&nbsp;
                 <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+                &nbsp;
+                <span>${data.info_time}</span>
               </div>
-              <p>${data.message}</p>
+              <p class="bg-teal-500 text-white rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
             </div> 
           <div>
           `;
@@ -199,15 +211,20 @@
     });
 
 
-      socket.on("message", (name, message, image) => {
+      socket.on("message", (name, message, image, hour, minutes, info_time) => {
         let broadcast = document.createElement("li");
         broadcast.innerHTML = `
-        <div class="flex items-center">
-          <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div >
-            <p class="text-lg">${name}</p>
-            <p>${message}</p>
-          </div>
-        <div> 
+        <div class="flex items-center ">
+          <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+            <div class="flex items-center ">
+              <p class="text-lg font-medium">${name}</p>&nbsp;
+              <span class="text-gray-900">${hour}:${minutes}</span>
+              &nbsp;
+              <span>${info_time}</span>
+            </div>
+            <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${message}</p>
+          </div> 
+        <div>
         `;
         messageUser.appendChild(broadcast);
         window.scrollTo(0, document.body.scrollHeight);
