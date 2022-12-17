@@ -141,10 +141,7 @@
     const status = document.querySelector(".status");
     const inputName = document.querySelector("#input-name");
     const btnName = document.querySelector("#btn-name")
-
     const formName = document.getElementById("form_name")
-
-    console.log(btnName)
 
     let nameUser = "";
 
@@ -169,10 +166,11 @@
       reader.readAsDataURL(this.files[0])
     })
 
+    let time = new Date()
+
     formChat.addEventListener('submit', function (e) {
       e.preventDefault();
         if (input.value) {
-          const time = new Date()
           let timeStatus = ""
 
           if (time.getHours() > 12) {
@@ -181,7 +179,7 @@
             timeStatus = "AM"
           }
 
-          const data = {
+          let data = {
             name: nameUser,
             message: input.value,
             image: `${preview.src}`,
@@ -189,6 +187,7 @@
             minutes: time.getMinutes(),
             info_time: timeStatus
           }
+
           socket.emit('message', data);
           var item = document.createElement('li');
           item.innerHTML = `
@@ -209,7 +208,6 @@
           input.value = '';
         }
     });
-
 
       socket.on("message", (name, message, image, hour, minutes, info_time) => {
         let broadcast = document.createElement("li");
