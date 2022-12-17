@@ -1,15 +1,15 @@
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+const path = require('path');
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
+app.use(express.static(path.join(__dirname, 'public')));
 
+let numUsers = 0;
 io.on('connection', (socket) => {
+  let addedUser = false;
   console.log('a user connected');
 
   socket.on('disconnect', (value) => {
@@ -18,10 +18,17 @@ io.on('connection', (socket) => {
 
   socket.on('message', (data) => {
     const { name, message, image, hour,  minutes, info_time  } = data;
+    socket.username = name;
     socket.broadcast.emit('message', name, message, image, hour, minutes, info_time);
   });
+
+  socket.on('add_user', (username) => {
+    numUsers++;
+    socket.broadcast.emit("add_user", {name: username, numUsers: numUsers});
+  });
+
 });
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(port, () => {
+  console.log('Server listening at port %d', port);
 });

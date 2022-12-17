@@ -12,3 +12,13 @@ Add private messaging.
 
 Share your improvements!
 
+
+
+  <section id="private_page">
+    <input type="text" id="private_name">
+    <button id="private_btn_name"></button>
+    <ul id="private_message"></ul>
+    <form id="private_form" action="">
+      <input id="private_input" autocomplete="off" /><button id="private_btn">Send</button>
+    </form>
+  </section>
