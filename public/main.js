@@ -19,8 +19,9 @@ formName.addEventListener("submit", (e) => {
     const homePage = document.getElementById("home_page");
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
-
+    
     nameUser = inputName.value;
+    socket.emit('add_user', nameUser);
   }
 });
 
@@ -57,7 +58,6 @@ formChat.addEventListener('submit', function (e) {
     }
 
     socket.emit('message', data);
-    socket.emit('add_user', data.name);
     var item = document.createElement('li');
     item.innerHTML = `
       <div class="flex items-center ">
@@ -106,14 +106,17 @@ socket.on('connect', () => {
   let statusP = document.createElement("p");
   statusP.textContent = "user connected";
 
-  const container = document.querySelector(".name");
-  container.appendChild(statusP);
+  const container = document.querySelector(".status");
+  container.appendChild(statusP); 
 
 
   // Private Script
 }); 
 
-socket.on('add_user', () => {
+socket.on('add_user', (username) => {
   const joinP = document.createElement('p');
-  joinP.innerHTML = `${data.name} joined the server`;
+  joinP.innerHTML = `${username.name} joined the server`;
+  const contJoinUser = document.querySelector(".join_user");
+  console.log(contJoinUser);
+  contJoinUser.appendChild(joinP);
 });

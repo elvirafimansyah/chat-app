@@ -24,9 +24,9 @@ io.on('connection', (socket) => {
 
   socket.on('add_user', (username) => {
     numUsers++;
+    socket.emit("login", {name: username})
     socket.broadcast.emit("add_user", {name: username, numUsers: numUsers});
   });
-
 });
 
 server.listen(port, () => {
