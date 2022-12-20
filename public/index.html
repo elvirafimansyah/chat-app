@@ -71,8 +71,8 @@
   <section id="chat_page" class="hidden">
     <div class="w-full h-full">
       <div class="flex">
-        <div>
-          <div class="w-64 absolute sm:fixed z-1 top-0 left-0  bg-gray-50 min-h-screen shadow md:h-full flex-col justify-between hidden sm:flex">
+        <div class="z-10">
+          <div class="w-64 absolute sm:fixed z-1 top-0 left-0 bg-slate-100 min-h-screen md:h-full flex-col justify-between hidden sm:flex">
             <div class="px-8">
               <a href="/" class="flex items-center py-4">
                 <img src="assets/profile.png" class="rounded-full w-10 h-10 m-2 border border-teal-500" alt="logo">&nbsp;
@@ -80,8 +80,8 @@
               </a>
               <ul class="mt-8">
                 <li>
-                  <a href="javascript:void(0)" class="flex w-full justify-between  cursor-pointer md:hover:bg-slate-100 md:rounded-md hover:font-medium cursor-pointer items-center mb-6 p-3">
-                    <span class="text-sm ml-2">Dashboard</span>
+                  <a href="javascript:void(0)" class="flex w-full justify-between  cursor-pointer md:bg-slate-200 md:rounded-md font-medium cursor-pointer items-center mb-6 p-3">
+                    <span class="text-sm ml-2">Home</span>
                   </a>
                 </li>
               </ul>
@@ -149,7 +149,7 @@
           <div class="fixed bottom-0 w-full bg-gray-50  ">
             <form  id="form_chat" class="w-full">
               <label for="chat" class="sr-only">Your message</label>
-              <div class="flex items-center px-3 py-2 rounded-lg justify-end md:mr-16" >
+              <div class="flex items-center px-3 py-2 rounded-lg justify-center md:justify-end md:mr-8 lg:mr-[3.5rem]" >
                 <button type="button"
                   class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100">
                   <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
@@ -160,18 +160,8 @@
                   </svg>
                   <span class="sr-only">Upload image</span>
                 </button>
-                <button type="button"
-                  class="p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 ">
-                  <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span class="sr-only">Add emoji</span>
-                </button>
                 <input id="chat"  
-                  class="block mx-4 p-2.5 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 "
+                  class="block mx-4 p-2.5 w-full md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 "
                   placeholder="Your message...">
                   
                 <button type="submit"
