@@ -80,15 +80,15 @@
               </a>
               <ul class="mt-8">
                 <li>
-                  <a href="javascript:void(0)" class="flex w-full justify-between cursor-pointer md:bg-slate-200 md:rounded-md font-medium cursor-pointer items-center mb-6 p-3">
+                  <a href="javascript:void(0)" class="flex w-full justify-between cursor-pointer sm:bg-slate-200 sm:rounded-md font-medium cursor-pointer items-center mb-6 p-3">
                     <span class="text-sm ml-2">Home</span>
                   </a>
                 </li>
-                <li class="absolute bottom-5 right-0 left-0  ">
-                  <div class="flex items-center sm:bg-slate-200 rounded-md p-3">
+                <li class="absolute bottom-5 right-0 left-0 mx-4 ">
+                  <div class="flex items-center sm:bg-slate-200 rounded-md p-3  ">
                     <img src="assets/profile.png" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
                     <div class="flex flex-col space-y-[-0.1rem] ">
-                      <p class="self-center whitespace-nowrap  font-medium">Elvira </p>
+                      <p class="self-center whitespace-nowrap  font-medium  inline-block whitespace-pre-line">Elvira Firmansyah </p>
                       <span class="text-xs text-slate-800">User</span>
                     </div>
                   </div>
@@ -141,12 +141,12 @@
           </div>
         </div>
         <!-- Sidebar ends -->
-        <div class="container mx-auto py-16 md:py-10 h-64 ">
-          <div class="md:pl-56">
+        <div class="container mx-auto py-16 sm:py-5 h-64 ">
+          <div class="sm:pl-56 md:pl-[16.5rem]">
             <div class="status"></div>
             <p class="join_user"></p>
+            <ul id="messages" class="list-none m-0 p-0"></ul>
           </div>
-          <ul id="messages" class="list-none m-0 p-0"></ul>
           <div class="fixed bottom-0 w-full bg-gray-50  ">
             <form  id="form_chat" class="w-full relative">
               <label for="chat" class="sr-only">Your message</label>
@@ -163,7 +163,7 @@
                 </button>
                 <input id="chat"  
                   class="block mx-4 p-2.5 w-full sm:w-5/12 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 "
-                  placeholder="Your message...">
+                  placeholder="Your message..." required>
                   
                 <button type="submit"
                   class="inline-flex justify-center p-2   text-teal-600 rounded-full cursor-pointer hover:bg-teal-50">

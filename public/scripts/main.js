@@ -14,13 +14,13 @@ let connected = false;
 
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
-  if (inputName.value !== "") {
+  if (inputName.value !== "" & inputName.value.length <= 17) {
     const chatPage = document.getElementById("chat_page");
     const homePage = document.getElementById("home_page");
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
     
-    nameUser = inputName.value;
+    nameUser = inputName.value.trim();
     socket.emit('add_user', nameUser);
   }
 });
