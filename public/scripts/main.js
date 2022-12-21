@@ -6,7 +6,8 @@ var messageUser = document.getElementById("messages");
 const status = document.querySelector(".status");
 const inputName = document.querySelector("#input-name");
 const btnName = document.querySelector("#btn-name")
-const formName = document.getElementById("form_name")
+const formName = document.getElementById("form_name");
+const profileUserContainer = document.getElementById("profile_user");
 
 let nameUser = "";
 let typing = false;
@@ -24,6 +25,18 @@ formName.addEventListener("submit", (e) => {
     socket.emit('add_user', nameUser);
   }
 });
+
+function profileUser(data) {
+  const userProfileUI =  `
+    <img src="${data.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
+    <div class="flex flex-col space-y-[-0.1rem] ">
+      <p class="self-center whitespace-nowrap  font-medium  inline-block whitespace-pre-line">${data.name} </p>
+      <span class="text-xs text-slate-800">User</span>
+    </div>
+  `
+
+  profileUserContainer.innerHTML = userProfileUI;
+}
 
 const preview = document.getElementById("preview-profile");
 
@@ -58,8 +71,8 @@ formChat.addEventListener('submit', function (e) {
     }
 
     socket.emit('message', data);
-    var item = document.createElement('li');
-    item.innerHTML = `
+    var chatList = document.createElement('li');
+    chatList.innerHTML = `
       <div class="flex items-center ">
         <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
           <div class="flex items-center ">
@@ -72,7 +85,9 @@ formChat.addEventListener('submit', function (e) {
         </div> 
       <div>
     `;
-    messageUser.appendChild(item);
+    messageUser.appendChild(chatList);
+
+    profileUser(data)
     window.scrollTo(0, document.body.scrollHeight);
     input.value = '';
   }
