@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Socket io chat</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Flowbite -->
+  <link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" />
+  <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -85,20 +88,10 @@
                   </a>
                 </li>
                 <li class="absolute bottom-5 right-0 left-0 mx-4 ">
-                  <div class="flex items-center sm:bg-slate-200 rounded-md p-3" id="profile_user">
-                  
+                  <div class="flex items-center justify-between sm:bg-slate-200 rounded-md p-3" id="profile_user">
                   </div>
                 </li>
               </ul>
-              <!-- <div class="absolute bottom-5 sm:bg-slate-200 w-full  rounded-md">
-                <div class="flex items-center ">
-                  <img src="assets/profile.png" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
-                  <div class="flex flex-col space-y-[-0.1rem] ">
-                    <p class="self-center whitespace-nowrap  font-medium">Elvira Firmansyah</p>
-                    <span class="text-xs text-slate-800">User</span>
-                  </div>
-                </div>
-              </div> -->
             </div>
           </div>
           <div class="w-64 z-40 absolute bg-gray-800 shadow min-h-screen md:h-full flex-col justify-between sm:hidden transition duration-150 ease-in-out"
@@ -112,6 +105,7 @@
                   d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
               </svg>
             </button>
+       
             <button aria-label="Close sidebar" id="closeSideBar"
               class="hidden h-10 w-10 bg-teal-500 absolute right-0 top-2 -mr-10 flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer text-white"
               onclick="sidebarHandler(false)">
@@ -138,6 +132,8 @@
         </div>
         <!-- Sidebar ends -->
         <div class="container mx-auto py-16 sm:py-5 h-64 ">
+          <div class="absolute  top-0 right-0 " id="profile_mobile_user">
+          </div>
           <div class="sm:pl-56 md:pl-[16.5rem]">
             <div class="status"></div>
             <p class="join_user"></p>
@@ -177,11 +173,10 @@
         </div>
       </div>
     </div>
-    
   </section>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="scripts/main.js">
-  </script>
+  <script src="scripts/main.js"></script>
+  <script src="scripts/sideBar.js"></script>
 </body>
 </html>

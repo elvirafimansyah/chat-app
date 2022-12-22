@@ -8,50 +8,108 @@ const inputName = document.querySelector("#input-name");
 const btnName = document.querySelector("#btn-name")
 const formName = document.getElementById("form_name");
 const profileUserContainer = document.getElementById("profile_user");
+const profileUserMobileContainer = document.getElementById("profile_mobile_user");
+const chatPage = document.getElementById("chat_page");
+const homePage = document.getElementById("home_page");
+
 
 let nameUser = "";
 let typing = false;
 let connected = false;
 
-formName.addEventListener("submit", (e) => {
-  e.preventDefault()
-  if (inputName.value !== "" & inputName.value.length <= 17) {
-    const chatPage = document.getElementById("chat_page");
-    const homePage = document.getElementById("home_page");
-    chatPage.classList.remove("hidden");
-    homePage.classList.add("hidden");
-    
-    nameUser = inputName.value.trim();
-    socket.emit('add_user', nameUser);
-  }
-});
-
-function profileUser(data) {
-  const userProfileUI =  `
-    <img src="${data.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
-    <div class="flex flex-col space-y-[-0.1rem] ">
-      <p class="self-center whitespace-nowrap  font-medium  inline-block whitespace-pre-line">${data.name} </p>
-      <span class="text-xs text-slate-800">User</span>
-    </div>
-  `
-
-  profileUserContainer.innerHTML = userProfileUI;
-}
-
+// Preview Profile Picture 
 const preview = document.getElementById("preview-profile");
-
 document.getElementById("profile").addEventListener("change", function () {
   const reader = new FileReader();
   reader.addEventListener("load", () => {
+    localStorage.setItem("src", reader.result)
     preview.src = reader.result;
   })
   reader.readAsDataURL(this.files[0])
 })
 
-let time = new Date()
+formName.addEventListener("submit", (e) => {
+  e.preventDefault()
+  if (inputName.value !== "" & inputName.value.length <= 17) {
+    chatPage.classList.remove("hidden");
+    homePage.classList.add("hidden");
+    
+    nameUser = inputName.value.trim();
+    socket.emit('add_user', nameUser);
+    socket.emit('login', nameUser);
+
+    localStorage.setItem("name", nameUser)
+    profileUser()
+  }
+});
+
+if(localStorage.getItem("name")) {
+  chatPage.classList.remove("hidden");
+  homePage.classList.add("hidden");
+  profileUser();
+} else {
+  chatPage.classList.add("hidden");
+  homePage.classList.remove("hidden");
+}
+
+function profileUser() {
+  const profileData = {
+    image: localStorage.getItem("src"),
+    name: localStorage.getItem("name")
+  }
+  const userProfileUI =  `
+    <div class="flex items-center">
+      <img src="${profileData.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
+      <div class="flex flex-col space-y-[-0.1rem] ">
+        <p class="self-center whitespace-nowrap  font-medium  inline-block whitespace-pre-line">${profileData.name} </p>
+        <span class="text-xs text-slate-800">User</span>
+      </div>
+    </div>
+    <button class="hover:bg-slate-100 p-2 rounded-md signout_btn" title="sign out">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+        <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+      </svg>
+    </button>
+  ` 
+
+  const userProfileMobileUI = `
+    <div class="hover:bg-glass-2 flex items-center px-3 py-1.5 rounded-md sm:hidden">
+    <h1 class=" hover:cursor-default font-medium" id="profile-name">hello &nbsp;</h1>
+    <img type="button" class="w-8 h-8 rounded-full cursor-pointer"
+      src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" data-dropdown-toggle="userDropdown"
+      data-dropdown-placement="bottom-start" id="profile-img">
+    </div>
+    <div id="userDropdown" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow ">
+      <ul class="py-1 text-sm text-gray-700 " aria-labelledby="multiLevelDropdownButton">
+        <li >
+          <a href="#" class="block py-2 px-4 hover:bg-gray-100 flex items-center justify-between"><span>Sign out</span><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+            <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+          </svg> </a>
+        </li>
+      </ul>
+    </div>
+  `
+  
+  profileUserContainer.innerHTML = userProfileUI;
+  profileUserMobileContainer.innerHTML = userProfileMobileUI
+
+  function signOut() {
+    console.log("click")
+    localStorage.clear();
+    window.location.reload()
+  }
+
+  const signOutBtn = profileUserContainer.querySelector(".signout_btn");
+  signOutBtn.addEventListener("click", () => {
+  })
+}
+
 
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
+  let time = new Date()
   if (input.value) {
     let timeStatus = ""
 
@@ -62,18 +120,20 @@ formChat.addEventListener('submit', function (e) {
     }
 
     let data = {
-      name: nameUser,
+      name: localStorage.getItem("name"),
       message: input.value,
-      image: `${preview.src}`,
+      image: localStorage.getItem("src"),
       hour: time.getHours(),
       minutes: time.getMinutes(),
-      info_time: timeStatus
+      info_time: timeStatus,
+      id: socket.id
     }
 
     socket.emit('message', data);
     var chatList = document.createElement('li');
+    chatList.classList.add("world")
     chatList.innerHTML = `
-      <div class="flex items-center ">
+      <div class="flex items-center " data-id="${data.id}">
         <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
           <div class="flex items-center ">
             <p class="text-lg font-medium">${data.name}</p>&nbsp;
@@ -87,7 +147,7 @@ formChat.addEventListener('submit', function (e) {
     `;
     messageUser.appendChild(chatList);
 
-    profileUser(data)
+
     window.scrollTo(0, document.body.scrollHeight);
     input.value = '';
   }
@@ -95,10 +155,11 @@ formChat.addEventListener('submit', function (e) {
   // Private Script
 });
 
-socket.on("message", (name, message, image, hour, minutes, info_time) => {
+socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   let broadcast = document.createElement("li");
+  broadcast.classList.add("world");
   broadcast.innerHTML = `
-  <div class="flex items-center ">
+  <div class="flex items-center" data-id="${id}">
     <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div>
       <div class="flex items-center ">
         <p class="text-lg font-medium">${name}</p>&nbsp;
@@ -110,10 +171,9 @@ socket.on("message", (name, message, image, hour, minutes, info_time) => {
     </div> 
   <div>
   `;
+
   messageUser.appendChild(broadcast);
   window.scrollTo(0, document.body.scrollHeight);
-
-
   // Private Script
 })
 
@@ -123,9 +183,7 @@ socket.on('connect', () => {
 
   const container = document.querySelector(".status");
   container.appendChild(statusP); 
-
-
-  // Private Script
+  
 }); 
 
 socket.on('add_user', (username) => {
@@ -136,20 +194,10 @@ socket.on('add_user', (username) => {
   contJoinUser.appendChild(joinP);
 });
 
-// Sidebar
-var sideBar = document.getElementById("mobile-nav");
-var openSidebar = document.getElementById("openSideBar");
-var closeSidebar = document.getElementById("closeSideBar");
-sideBar.style.transform = "translateX(-260px)";
-
-function sidebarHandler(flag) {
-  if (flag) {
-    sideBar.style.transform = "translateX(0px)";
-    openSidebar.classList.add("hidden");
-    closeSidebar.classList.remove("hidden");
-  } else {
-    sideBar.style.transform = "translateX(-260px)";
-    closeSidebar.classList.add("hidden");
-    openSidebar.classList.remove("hidden");
-  }
-}
+// const saveData = JSON.parse(localStorage.getItem("data_result")) || [];
+// function addData(name, message, image, hour,minutes,info_time,id) {
+//   saveData.push({
+//     name,
+//     message,
+//   })
+// } 
