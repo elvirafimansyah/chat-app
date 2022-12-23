@@ -44,8 +44,6 @@ formName.addEventListener("submit", (e) => {
   }
 });
 
-
-
 function profileUser() {
   const profileData = {
     image: localStorage.getItem("src"),
@@ -94,15 +92,17 @@ function profileUser() {
   });
 }
 
-if (localStorage.getItem("name")) {
-  chatPage.classList.remove("hidden");
-  homePage.classList.add("hidden");
-  profileUser();
-} else if(!localStorage.getItem("src")) {
-  localStorage.setItem("src", "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png")
-} else {
-  chatPage.classList.add("hidden");
-  homePage.classList.remove("hidden");
+function saveProfile() {
+  if (localStorage.getItem("name")) {
+    chatPage.classList.remove("hidden");
+    homePage.classList.add("hidden");
+    profileUser();
+  } else if(!localStorage.getItem("src")) {
+    localStorage.setItem("src", "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png")
+  } else {
+    chatPage.classList.add("hidden");
+    homePage.classList.remove("hidden");
+  }
 }
 
 
@@ -128,8 +128,11 @@ formChat.addEventListener('submit', function (e) {
       id: socket.id
     }
 
+    // local data
     saveUser.push(data);
     localStorage.setItem("data_user", JSON.stringify(saveUser));
+
+    // global data
     allUser.push(data)
     localStorage.setItem("all_user", JSON.stringify(allUser))
 
@@ -138,8 +141,6 @@ formChat.addEventListener('submit', function (e) {
     window.scrollTo(0, document.body.scrollHeight);
     input.value = '';
   }
-  
-  // Private Script
 });
 
 socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
@@ -153,8 +154,11 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
     id: id,
   }
 
+  // local data broadcast
   saveUserBroadcast.push(broadcast_data);
   localStorage.setItem("user_broadcast", JSON.stringify(saveUserBroadcast));
+
+  // global data
   allUser.push(broadcast_data);
   localStorage.setItem("all_user", JSON.stringify(allUser))
   
@@ -176,63 +180,16 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   
   saveAllMessage()
 
-  messageUser.appendChild(broadcast);
+  // messageUser.appendChild(broadcast);
   window.scrollTo(0, document.body.scrollHeight);
-  // Private Script
 })
 
-
-function displayMessage() {
-  messageUser.innerHTML = "";
-  saveUser.forEach(data => {
-    var chatList = document.createElement('li');
-    chatList.classList.add("world")
-    chatList.innerHTML = `
-        <div class="flex items-center " data-id="${data.id}">
-          <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-            <div class="flex items-center ">
-              <p class="text-lg font-medium">${data.name}</p>&nbsp;
-              <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-              &nbsp;
-              <span>${data.info_time}</span>
-            </div>
-            <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-          </div> 
-        <div>
-      `;
-    messageUser.appendChild(chatList);
-  })
-}
-
-function displayMessageBroadcast() {
-  messageUser.innerHTML = ""
-  saveUserBroadcast.forEach(data => {
-    let broadcast = document.createElement("li");
-    broadcast.classList.add("world");
-    broadcast.innerHTML = `
-      <div class="flex items-center" data-id="${data.id}">
-        <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-          <div class="flex items-center ">
-            <p class="text-lg font-medium">${data.name}</p>&nbsp;
-            <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-            &nbsp;
-            <span>${data.info_time}</span>
-          </div>
-          <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-        </div> 
-      <div>
-      `;
-
-    messageUser.appendChild(broadcast);
-  })
-  window.scrollTo(0, document.body.scrollHeight);
-}
 
 function saveAllMessage() {
   messageUser.innerHTML = ""
   allUser.forEach(data => {
     let allMessage = document.createElement("li");
-    allMessage.classList.add("world");
+    allMessage.classList.add("chat_list");
     allMessage.innerHTML = `
       <div class="flex items-center" data-id="${data.id}">
         <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
@@ -253,12 +210,12 @@ function saveAllMessage() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  saveProfile()
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
     saveAllMessage()
+    window.scrollTo(0, document.body.scrollHeight);
   } 
 })
-
-
 
 socket.on('connect', () => {
   let statusP = document.createElement("p");
@@ -296,3 +253,49 @@ socket.on('add_user', (username) => {
 // function displayResultElement({name,message,image,hour,minutes,info_time, id}) {
 
 // };
+
+// function displayMessage() {
+//   messageUser.innerHTML = "";
+//   saveUser.forEach(data => {
+//     var chatList = document.createElement('li');
+//     chatList.classList.add("world")
+//     chatList.innerHTML = `
+//         <div class="flex items-center " data-id="${data.id}">
+//           <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+//             <div class="flex items-center ">
+//               <p class="text-lg font-medium">${data.name}</p>&nbsp;
+//               <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+//               &nbsp;
+//               <span>${data.info_time}</span>
+//             </div>
+//             <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+//           </div> 
+//         <div>
+//       `;
+//     messageUser.appendChild(chatList);
+//   })
+// }
+
+// function displayMessageBroadcast() {
+//   messageUser.innerHTML = ""
+//   saveUserBroadcast.forEach(data => {
+//     let broadcast = document.createElement("li");
+//     broadcast.classList.add("world");
+//     broadcast.innerHTML = `
+//       <div class="flex items-center" data-id="${data.id}">
+//         <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+//           <div class="flex items-center ">
+//             <p class="text-lg font-medium">${data.name}</p>&nbsp;
+//             <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+//             &nbsp;
+//             <span>${data.info_time}</span>
+//           </div>
+//           <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+//         </div> 
+//       <div>
+//       `;
+
+//     messageUser.appendChild(broadcast);
+//   })
+//   window.scrollTo(0, document.body.scrollHeight);
+// }
