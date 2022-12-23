@@ -180,7 +180,7 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   
   saveAllMessage()
 
-  // messageUser.appendChild(broadcast);
+  // messageUse//10r.appendChild(broadcast);
   window.scrollTo(0, document.body.scrollHeight);
 })
 
