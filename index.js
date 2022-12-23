@@ -22,7 +22,6 @@ io.on('connection', (socket) => {
     socket.username = name;
     socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id);
     console.log(data);
-
   });
 
   socket.on('add_user', (username) => {

@@ -5,15 +5,15 @@ var messageUser = document.getElementById("messages");
 // name
 const status = document.querySelector(".status");
 const inputName = document.querySelector("#input-name");
-const btnName = document.querySelector("#btn-name")
 const formName = document.getElementById("form_name");
 const profileUserContainer = document.getElementById("profile_user");
-const profileUserMobileContainer = document.getElementById("profile_mobile_user");
 const chatPage = document.getElementById("chat_page");
 const homePage = document.getElementById("home_page");
 
+
 let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
 let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
+let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
 let typing = false;
 let connected = false;
@@ -125,46 +125,22 @@ formChat.addEventListener('submit', function (e) {
       hour: time.getHours(),
       minutes: time.getMinutes(),
       info_time: timeStatus,
-      id: socket.id,
+      id: socket.id
     }
 
     saveUser.push(data);
-    localStorage.setItem("data_user", JSON.stringify(saveUser))
+    localStorage.setItem("data_user", JSON.stringify(saveUser));
+    allUser.push(data)
+    localStorage.setItem("all_user", JSON.stringify(allUser))
 
-    displayMessage()
-    socket.emit('message', data);
-    input.value = '';
+    socket.emit("message", data)
+    saveAllMessage();
     window.scrollTo(0, document.body.scrollHeight);
+    input.value = '';
   }
-
+  
   // Private Script
 });
-
-function displayMessage() {
-  messageUser.innerHTML = "";
-  saveUser.forEach(data => {
-    var chatList = document.createElement('li');
-    chatList.classList.add("world")
-    chatList.innerHTML = `
-      <div class="flex items-center " data-id="${data.id}">
-        <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-          <div class="flex items-center ">
-            <p class="text-lg font-medium">${data.name}</p>&nbsp;
-            <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-            &nbsp;
-            <span>${data.info_time}</span>
-          </div>
-          <p class="bg-teal-500 text-white rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-        </div> 
-      <div>
-    `;
-    messageUser.appendChild(chatList);
-  })
-  window.scrollTo(0, document.body.scrollHeight);
-}
-
-
-
 
 socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   let broadcast_data = {
@@ -179,10 +155,54 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
 
   saveUserBroadcast.push(broadcast_data);
   localStorage.setItem("user_broadcast", JSON.stringify(saveUserBroadcast));
-
-  displayMessageBroadcast()
+  allUser.push(broadcast_data);
+  localStorage.setItem("all_user", JSON.stringify(allUser))
   
+  // let broadcast = document.createElement("li");
+  // broadcast.classList.add("world");
+  // broadcast.innerHTML = `
+  // <div class="flex items-center" data-id="${id}">
+  //   <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+  //     <div class="flex items-center ">
+  //       <p class="text-lg font-medium">${name}</p>&nbsp;
+  //       <span class="text-gray-900">${hour}:${minutes}</span>
+  //       &nbsp;
+  //       <span>${info_time}</span>
+  //     </div>
+  //     <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${message}</p>
+  //   </div> 
+  // <div>
+  // `;
+  
+  saveAllMessage()
+
+  messageUser.appendChild(broadcast);
+  window.scrollTo(0, document.body.scrollHeight);
+  // Private Script
 })
+
+
+function displayMessage() {
+  messageUser.innerHTML = "";
+  saveUser.forEach(data => {
+    var chatList = document.createElement('li');
+    chatList.classList.add("world")
+    chatList.innerHTML = `
+        <div class="flex items-center " data-id="${data.id}">
+          <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+            <div class="flex items-center ">
+              <p class="text-lg font-medium">${data.name}</p>&nbsp;
+              <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+              &nbsp;
+              <span>${data.info_time}</span>
+            </div>
+            <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+          </div> 
+        <div>
+      `;
+    messageUser.appendChild(chatList);
+  })
+}
 
 function displayMessageBroadcast() {
   messageUser.innerHTML = ""
@@ -204,16 +224,41 @@ function displayMessageBroadcast() {
       `;
 
     messageUser.appendChild(broadcast);
-  }) 
+  })
   window.scrollTo(0, document.body.scrollHeight);
 }
 
+function saveAllMessage() {
+  messageUser.innerHTML = ""
+  allUser.forEach(data => {
+    let allMessage = document.createElement("li");
+    allMessage.classList.add("world");
+    allMessage.innerHTML = `
+      <div class="flex items-center" data-id="${data.id}">
+        <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+          <div class="flex items-center ">
+            <p class="text-lg font-medium">${data.name}</p>&nbsp;
+            <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+            &nbsp;
+            <span>${data.info_time}</span>
+          </div>
+          <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+        </div> 
+      <div>
+      `;
 
-if (localStorage.getItem("data_user")) {
-  displayMessage()
-} else if (localStorage.getItem("user_broadcast")) {
-  displayMessageBroadcast()
+    messageUser.appendChild(allMessage);
+  })
+  window.scrollTo(0, document.body.scrollHeight);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
+    saveAllMessage()
+  } 
+})
+
+
 
 socket.on('connect', () => {
   let statusP = document.createElement("p");
@@ -221,6 +266,7 @@ socket.on('connect', () => {
 
   const container = document.querySelector(".status");
   container.appendChild(statusP); 
+  
 }); 
 
 socket.on('add_user', (username) => {
