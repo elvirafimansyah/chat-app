@@ -7,29 +7,42 @@ const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-let numUsers = 0;
+let totalUsers = 0;
 io.on('connection', (socket) => {
   let addedUser = false;
   console.log('a user connected');
   console.log(socket.rooms);
 
-  socket.on('disconnect', (value) => {
-    console.log(`user disconnected`);
-  });
-
+  
   socket.on('message', (data) => {
-    const { name, message, image, hour,  minutes, info_time, id  } = data;
+    const { name, message, image, hour,  minutes, info_time, id } = data;
     socket.username = name;
     socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id);
-    console.log(data);
   });
+  
+  
+  // socket.on("private message", ({content, to}) => {
+  //   socket.to(to).emit("private message", {
+    //     content,
+    //     from: socket.id
+    //   })
+  // })
+  
 
   socket.on('add_user', (username) => {
-    addedUser = true;
-    numUsers++;
+    if(addedUser) return;
+    totalUsers++;
     socket.emit("login", {name: username})
-    socket.broadcast.emit("add_user", {name: username, numUsers: numUsers});
+    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers });
   });
+  socket.on('disconnect', () => {
+    console.log(`user disconnected`);
+    socket.broadcast.emit("user left", {
+      username: socket.username,
+      totalUser: totalUsers
+    })
+  });
+
 });
 
 server.listen(port, () => {

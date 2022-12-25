@@ -9,7 +9,7 @@ const formName = document.getElementById("form_name");
 const profileUserContainer = document.getElementById("profile_user");
 const chatPage = document.getElementById("chat_page");
 const homePage = document.getElementById("home_page");
-
+const alertCopy = document.getElementById("toast-success");
 
 let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
 let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
@@ -38,23 +38,34 @@ formName.addEventListener("submit", (e) => {
     nameUser = inputName.value.trim();
     socket.emit('add_user', nameUser);
     socket.emit('login', nameUser);
-
+    
     localStorage.setItem("name", nameUser)
+    localStorage.setItem("id", socket.id);
     profileUser()
   }
 });
 
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alertCopy.classList.remove("hidden");
+    setTimeout(() => {
+      alertCopy.classList.toggle('hidden');
+    }, 2500);
+  })
+}
+
 function profileUser() {
   const profileData = {
     image: localStorage.getItem("src"),
-    name: localStorage.getItem("name")
+    name: localStorage.getItem("name"),
+    id: localStorage.getItem("id")
   }
   const userProfileUI =  `
     <div class="flex items-center">
       <img src="${profileData.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
-      <div class="flex flex-col space-y-[-0.1rem] ">
-        <p class="self-center whitespace-nowrap  font-medium  inline-block whitespace-pre-line">${profileData.name} </p>
-        <span class="text-xs text-slate-800">User</span>
+      <div>
+        <p class="self-center whitespace-nowrap text-lg font-medium  inline-block whitespace-pre-line">${profileData.name} </p>
+        <p class="text-xs text-slate-800 id_text hover:cursor-pointer" title="id">${profileData.id}</p>
       </div>
     </div>
     <button class="hover:bg-slate-100 p-2 rounded-md signout_btn" title="sign out" >
@@ -64,15 +75,16 @@ function profileUser() {
       </svg>
     </button>
   ` 
-
-  
   profileUserContainer.innerHTML = userProfileUI;
+
+  const profileID = document.querySelector("#profile_id");
   // Mobile User Profile Function
-  function mobileUserProfile(name, image) {
+  function mobileUserProfile(name, image, id) {
     name.innerHTML = profileData.name;
     image.innerHTML = profileData.image;
+    id.innerHTML = profileData.id;
   }
-  mobileUserProfile(document.querySelector("#profile_name"), document.querySelector("#profile_img"))
+  mobileUserProfile(document.querySelector("#profile_name"), document.querySelector("#profile_img"), profileID)
 
   // SignOut User function
   const signOutBtn = profileUserContainer.querySelector(".signout_btn");
@@ -90,6 +102,15 @@ function profileUser() {
   signOutBtnMobile.addEventListener("click", () => {
     signOut()
   });
+  
+  // Copy Function
+  const idText = profileUserContainer.querySelector(".id_text");
+  idText.addEventListener("click", () => {
+    copyText(idText.innerText);
+  });
+  profileID.addEventListener("click", () => {
+    copyText(profileID.innerText);
+  })
 }
 
 function saveProfile() {
@@ -104,8 +125,6 @@ function saveProfile() {
     homePage.classList.remove("hidden");
   }
 }
-
-
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
   let time = new Date();
@@ -125,7 +144,7 @@ formChat.addEventListener('submit', function (e) {
       hour: time.getHours(),
       minutes: time.getMinutes(),
       info_time: timeStatus,
-      id: socket.id
+      id: localStorage.getItem("id")
     }
 
     // local data
@@ -180,7 +199,6 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   
   saveAllMessage()
 
-  // messageUse//10r.appendChild(broadcast);
   window.scrollTo(0, document.body.scrollHeight);
 })
 
@@ -217,6 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
   } 
 })
 
+
+
 socket.on('connect', () => {
   let statusP = document.createElement("p");
   statusP.textContent = "user connected";
@@ -232,7 +252,13 @@ socket.on('add_user', (username) => {
   const contJoinUser = document.querySelector(".join_user");
   console.log(contJoinUser);
   contJoinUser.appendChild(joinP);
+  console.log(username)
 });
+
+socket.on('user left', (data) => {
+  console.log(`${data.username} left`);
+});
+
 
 // function addData(name, message, image, hour,minutes,info_time,id) {
 //   saveUser.push({

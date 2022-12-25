@@ -53,13 +53,20 @@
             </label>
             <input id="profile" type="file" accept="image/*" class="hidden">
           </div>
-          <div>
-            <label for="email-address" class="sr-only">Nickname</label>
-            <input id="input-name" name="name" type="text" autocomplete="name" required
-              class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
-              placeholder="Nickname">
+          <div class="-space-y-px rounded-md shadow-sm">
+            <div>
+              <label for="email-address" class="sr-only">Nickname</label>
+              <input id="input-name" name="name" type="text" autocomplete="name" required
+                class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+                placeholder="Nickname">
+            </div>
+            <div>
+              <label for="room" class="sr-only">Room</label>
+              <input id="rooms" name="room" type="text" autocomplete="current-room" 
+                class="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+                placeholder="Room">
+            </div>
           </div>
-          
         </div>
         <div>
           <button type="submit" id="btn-name"
@@ -70,18 +77,33 @@
       </form>
     </div>
   </div>
-
   <section id="chat_page" class="hidden">
     <div class="w-full h-full">
       <div class="flex">
         <div class="z-10">
-          <div class="w-64 absolute sm:fixed z-1 top-0 left-0 bg-slate-100 min-h-screen md:h-full flex-col justify-between hidden sm:flex">
+          <div class="w-64 xl:w-72 absolute sm:fixed z-1 top-0 left-0 bg-slate-100 min-h-screen md:h-full flex-col justify-between hidden sm:flex">
             <div class="px-8">
               <a href="/" class="flex items-center py-4">
                 <img src="assets/chat.png" class="w-10 h-10 m-2" alt="logo">&nbsp;
                 <span class="self-center text-xl font-bold whitespace-nowrap ">Emore Chat</span>
               </a>
-              <ul class="mt-8">
+              <ul class="mt-4">
+                <div class="flex justify-center  mb-4 w-full">
+                  <div class="relative">
+                    <div class="text-gray-800 absolute ml-4 inset-0 m-auto w-4 h-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="16" height="16"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                        <circle cx="10" cy="10" r="7"></circle>
+                        <line x1="21" y1="21" x2="15" y2="15"></line>
+                      </svg>
+                    </div>
+                    <input
+                      class="bg-gray-700 focus:outline-none focus:ring-1 focus:ring-teal-600 rounded w-full text-sm text-gray-800 placeholder-gray-500 bg-white pl-12 px-4 py-2 border-none"
+                      type="text" placeholder="Search Room" id="search_room_input"/>
+                  </div>
+                </div>
                 <li>
                   <a href="javascript:void(0)" class="flex w-full justify-between cursor-pointer sm:bg-slate-200 sm:rounded-md font-medium cursor-pointer items-center mb-6 p-3">
                     <span class="text-sm ml-2">Home</span>
@@ -94,7 +116,7 @@
               </ul>
             </div>
           </div>
-          <div class="w-64 z-40 absolute bg-gray-800 shadow min-h-screen md:h-full flex-col justify-between sm:hidden transition duration-150 ease-in-out"
+          <div class="w-64 z-40 absolute bg-slate-100 shadow min-h-screen md:h-full flex-col justify-between sm:hidden transition duration-150 ease-in-out"
             id="mobile-nav">
             <button aria-label="toggle sidebar" id="openSideBar"
               class="h-10 w-10 bg-teal-500  absolute right-0 top-3 -mr-[3.5rem] flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800"
@@ -119,10 +141,27 @@
                 <img src="assets/profile.png" class="rounded-full w-10 h-10 m-2 border border-teal-500" alt="logo">&nbsp;
                 <span class="self-center text-xl font-semibold whitespace-nowrap ">Emore Chat</span>
               </a>
-              <ul class="mt-12">
-                <li class="flex w-full justify-between text-gray-300 hover:text-gray-500 cursor-pointer items-center mb-6">
-                  <a href="javascript:void(0)" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                    <span class="text-sm ml-2">Dashboard</span>
+              <ul >
+                  <div class="flex justify-center  mb-4 w-full">
+                    <div class="relative">
+                      <div class="text-gray-800 absolute ml-4 inset-0 m-auto w-4 h-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="16" height="16"
+                          viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z"></path>
+                          <circle cx="10" cy="10" r="7"></circle>
+                          <line x1="21" y1="21" x2="15" y2="15"></line>
+                        </svg>
+                      </div>
+                      <input
+                        class="bg-gray-700 focus:outline-none focus:ring-1 focus:ring-teal-600 rounded w-full text-sm text-gray-800 placeholder-gray-500 bg-white pl-12 py-2 border-none"
+                        type="text" placeholder="Search Room" />
+                    </div>
+                  </div>
+                <li>
+                  <a href="javascript:void(0)"
+                    class="flex w-full justify-between cursor-pointer bg-slate-200 rounded-md font-medium cursor-pointer items-center mb-6 p-3">
+                    <span class="text-sm ml-2">Home</span>
                   </a>
                 </li>
               </ul>
@@ -131,7 +170,7 @@
         </div>
         <!-- Sidebar ends -->
         <div class="container mx-auto py-16 sm:py-5 h-64 ">
-          <div class="absolute  top-0 right-0 " id="profile_mobile_user">
+          <div class="absolute top-0 right-0 " id="profile_mobile_user">
             <div class="hover:bg-glass-2 flex items-center px-3 py-1.5 rounded-md sm:hidden" >
               <h1 class=" hover:cursor-default font-medium" id="profile_name">hello &nbsp;</h1>
               <img type="button" class="w-8 h-8 rounded-full cursor-pointer"
@@ -139,7 +178,7 @@
                 data-dropdown-placement="bottom-start" id="profile_img">
             </div>
             <div id="userDropdown" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow ">
-              <ul class="py-1 text-sm text-gray-700 " aria-labelledby="multiLevelDropdownButton">
+              <ul class="py-1 text-sm text-gray-700 divide-y divide-gray-100 " aria-labelledby="multiLevelDropdownButton">
                 <li class="signout_mobile_btn">
                   <a href="#" class="block py-2 px-4 hover:bg-gray-100 flex items-center justify-between"><span>Sign out</span><svg
                       xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626" class="bi bi-box-arrow-in-right"
@@ -153,7 +192,7 @@
               </ul>
             </div>
           </div>
-          <div class="sm:pl-56 md:pl-[16.5rem]">
+          <div class="sm:pl-56 md:pl-[16.5rem]" id="home_chat_page">
             <div class="status"></div>
             <p class="join_user"></p>
             <ul id="messages" class="list-none pb-20 p-0"></ul>
@@ -193,6 +232,34 @@
       </div>
     </div>
   </section>
+  
+  <!-- alert copy -->
+  <div id="toast-success"
+    class="flex fixed sm:top-2 sm:right-2 items-center p-4 mb-4 w-full max-w-xs rounded-lg shadow text-gray-800 bg-gray-50 hidden "
+    role="alert">
+    <div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8  rounded-lg bg-teal-500 text-teal-50">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+        class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+        <path
+          d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
+        <path
+          d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z" />
+      </svg>
+      <span class="sr-only">Check icon</span>
+    </div>
+    <div class="ml-3 text-sm font-normal">ID User Copied</div>
+    <button type="button"
+      class="ml-auto -mx-1.5 -my-1.5 bg-gray-100 text-gray-700 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5  inline-flex h-8 w-8 "
+      data-dismiss-target="#toast-success" aria-label="Close">
+      <span class="sr-only">Close</span>
+      <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  </div>
+  <!-- End Alert Copy -->
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="scripts/main.js"></script>
