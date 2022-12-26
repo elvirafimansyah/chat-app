@@ -38,7 +38,8 @@ formName.addEventListener("submit", (e) => {
     nameUser = inputName.value.trim();
     socket.emit('add_user', nameUser);
     socket.emit('login', nameUser);
-    
+    socket.emit("sendNickname", nameUser)
+
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
     profileUser()
@@ -53,6 +54,7 @@ function copyText(text) {
     }, 2500);
   })
 }
+
 
 function profileUser() {
   const profileData = {
@@ -77,8 +79,8 @@ function profileUser() {
   ` 
   profileUserContainer.innerHTML = userProfileUI;
 
-  const profileID = document.querySelector("#profile_id");
   // Mobile User Profile Function
+  const profileID = document.querySelector("#profile_id");
   function mobileUserProfile(name, image, id) {
     name.innerHTML = profileData.name;
     image.innerHTML = profileData.image;
@@ -117,6 +119,7 @@ function saveProfile() {
   if (localStorage.getItem("name")) {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
+    socket.emit("sendNickname", localStorage.getItem("name"))
     profileUser();
   } else if(!localStorage.getItem("src")) {
     localStorage.setItem("src", "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png")
@@ -235,93 +238,16 @@ document.addEventListener("DOMContentLoaded", () => {
   } 
 })
 
-
-
-socket.on('connect', () => {
-  let statusP = document.createElement("p");
-  statusP.textContent = "user connected";
-
-  const container = document.querySelector(".status");
-  container.appendChild(statusP); 
-  
-}); 
-
 socket.on('add_user', (username) => {
   const joinP = document.createElement('p');
   joinP.innerHTML = `${username.name} joined the server`;
   const contJoinUser = document.querySelector(".join_user");
-  console.log(contJoinUser);
   contJoinUser.appendChild(joinP);
-  console.log(username)
 });
 
-socket.on('user left', (data) => {
-  console.log(`${data.username} left`);
-});
-
-
-// function addData(name, message, image, hour,minutes,info_time,id) {
-//   saveUser.push({
-//     name,
-//     message,
-//     image,
-//     hour,
-//     minutes,
-//     info_time,
-//     id
-//   })
-
-//   localStorage.setItem("data_user", JSON.stringify(saveUser));
-
-//   return {name, message, image,hour,minutes,info_time,id}
-// } 
-
-// function displayResultElement({name,message,image,hour,minutes,info_time, id}) {
-
-// };
-
-// function displayMessage() {
-//   messageUser.innerHTML = "";
-//   saveUser.forEach(data => {
-//     var chatList = document.createElement('li');
-//     chatList.classList.add("world")
-//     chatList.innerHTML = `
-//         <div class="flex items-center " data-id="${data.id}">
-//           <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-//             <div class="flex items-center ">
-//               <p class="text-lg font-medium">${data.name}</p>&nbsp;
-//               <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-//               &nbsp;
-//               <span>${data.info_time}</span>
-//             </div>
-//             <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-//           </div> 
-//         <div>
-//       `;
-//     messageUser.appendChild(chatList);
-//   })
-// }
-
-// function displayMessageBroadcast() {
-//   messageUser.innerHTML = ""
-//   saveUserBroadcast.forEach(data => {
-//     let broadcast = document.createElement("li");
-//     broadcast.classList.add("world");
-//     broadcast.innerHTML = `
-//       <div class="flex items-center" data-id="${data.id}">
-//         <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-//           <div class="flex items-center ">
-//             <p class="text-lg font-medium">${data.name}</p>&nbsp;
-//             <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-//             &nbsp;
-//             <span>${data.info_time}</span>
-//           </div>
-//           <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-//         </div> 
-//       <div>
-//       `;
-
-//     messageUser.appendChild(broadcast);
-//   })
-//   window.scrollTo(0, document.body.scrollHeight);
-// }
+socket.on("userLeft", (data) => {
+  const leftP = document.createElement("p");  
+  leftP.innerHTML = `${data.name} left the room`
+  const containerLeft = document.querySelector(".left_user");
+  containerLeft.appendChild(leftP);
+})
