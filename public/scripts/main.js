@@ -67,7 +67,7 @@ function profileUser() {
       <img src="${profileData.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
       <div>
         <p class="self-center whitespace-nowrap text-lg font-medium  inline-block whitespace-pre-line">${profileData.name} </p>
-        <p class="text-xs text-slate-800 id_text hover:cursor-pointer" title="id">${profileData.id}</p>
+        <p class="text-xs text-slate-800 id_text hover:cursor-pointer break-all" title="id">${profileData.id}</p>
       </div>
     </div>
     <button class="hover:bg-slate-100 p-2 rounded-md signout_btn" title="sign out" >
@@ -246,8 +246,10 @@ socket.on('add_user', (username) => {
 });
 
 socket.on("userLeft", (data) => {
-  const leftP = document.createElement("p");  
-  leftP.innerHTML = `${data.name} left the room`
-  const containerLeft = document.querySelector(".left_user");
-  containerLeft.appendChild(leftP);
+  if(data.name !== undefined) {
+    const leftP = document.createElement("p");  
+    leftP.innerHTML = `${data.name} left the room`
+    const containerLeft = document.querySelector(".left_user");
+    containerLeft.appendChild(leftP);
+  }
 })
