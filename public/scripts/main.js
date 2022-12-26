@@ -2,7 +2,7 @@ var socket = io();
 var formChat = document.getElementById('form_chat');
 var input = document.getElementById('chat');
 var messageUser = document.getElementById("messages");
-// name
+
 const status = document.querySelector(".status");
 const inputName = document.querySelector("#input-name");
 const formName = document.getElementById("form_name");
@@ -10,6 +10,7 @@ const profileUserContainer = document.getElementById("profile_user");
 const chatPage = document.getElementById("chat_page");
 const homePage = document.getElementById("home_page");
 const alertCopy = document.getElementById("toast-success");
+const inputRoom = document.getElementById
 
 let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
 let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
