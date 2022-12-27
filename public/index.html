@@ -64,7 +64,7 @@
               <label for="room" class="sr-only">Room</label>
               <input id="rooms" name="room" type="text" autocomplete="current-room" 
                 class="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
-                placeholder="Room">
+                placeholder="Room" >
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@
                         d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
                     </svg>
                   </button>
-                  Room 1
+                  <p class="display_room">Room 1</p>
                 </div>
                 <div class="flex sm:order-2">
                   <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false"
@@ -191,7 +191,7 @@
                   </button>
                   <div id="profile_mobile_user">
                     <div class="hover:bg-glass-2 flex items-center px-3 py-1.5 rounded-md sm:hidden">
-                      <h1 class=" hover:cursor-default font-medium" id="profile_name">hello &nbsp;</h1>
+                      <h1 class=" hover:cursor-default font-medium" id="profile_name">hello</h1> &nbsp;
                       <img type="button" class="w-8 h-8 rounded-full cursor-pointer"
                         src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" data-dropdown-toggle="userDropdown"
                         data-dropdown-placement="bottom-start" id="profile_img">
@@ -225,7 +225,7 @@
                       <span class="sr-only">Search icon</span>
                     </div>
                     <input type="text" id="search-navbar"
-                      class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                      class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-teal-500 focus:border-teal-500"
                       placeholder="Search...">
                   </div>
                 </div>
@@ -240,7 +240,7 @@
                       </svg>
                     </div>
                     <input type="text" id="search-navbar"
-                      class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                      class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-teal-500  focus:border-teal-500 "
                       placeholder="Search...">
                   </div>
                 </div>
@@ -268,7 +268,6 @@
                 <input id="chat"  
                   class="block mx-4 p-2.5 w-full sm:w-5/12 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg  focus:ring-teal-500 focus:border-teal-500 focus:outline-none border border-slate-200 "
                   placeholder="Your message..." required>
-                  
                 <button type="submit"
                   class="inline-flex justify-center p-2   text-teal-600 rounded-full cursor-pointer hover:bg-teal-50">
                   <svg aria-hidden="true" class="w-6 h-6 rotate-90" fill="currentColor" viewBox="0 0 20 20"
@@ -333,7 +332,6 @@
         </button>
       </div>
       <div class="flex items-center" id="user_notifcation">
-
       </div>
     </div>
   </div>

@@ -8,20 +8,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let totalUsers = 0;
 let user_nickname = [];
-let user_image = [];
+let users = []
 
 io.on('connection', (socket) => {
   let addedUser = false;
   console.log('a user connected');
-
-  socket.on("sendNickname", (username, image) => {
+  
+  socket.on("sendNickname", (username) => {
     socket.username = username;
     user_nickname.push(socket.username)
   })
 
+  socket.on("sendData", (room, id) => {
+    socket.room = room;
+    socket.userid = id;
+    users.push(room);
+    socket.emit("sendData", {room: socket.room, id: socket.userid});
+  });
+  
+  // socket.on("private message", (to, message) => {
+    
+  // });
+
 
   socket.on('add_user', (username, image) => {
     socket.image = image;
+    socket.username = username;
     addedUser = true;
     totalUsers++;
     socket.emit("login", {name: username})
@@ -32,11 +44,9 @@ io.on('connection', (socket) => {
     const { name, message, image, hour,  minutes, info_time, id } = data;
     socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id);
   });
-  
 
   socket.on('disconnect', () => {
     totalUsers--;
-    console.log(socket.image);
     socket.broadcast.emit('userLeft', {
       name: socket.username, 
       totalUser: totalUsers, 

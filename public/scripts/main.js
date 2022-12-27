@@ -2,7 +2,6 @@ var socket = io();
 var formChat = document.getElementById('form_chat');
 var input = document.getElementById('chat');
 var messageUser = document.getElementById("messages");
-
 const status = document.querySelector(".status");
 const inputName = document.querySelector("#input-name");
 const formName = document.getElementById("form_name");
@@ -10,12 +9,14 @@ const profileUserContainer = document.getElementById("profile_user");
 const chatPage = document.getElementById("chat_page");
 const homePage = document.getElementById("home_page");
 const alertCopy = document.getElementById("toast-success");
-const inputRoom = document.getElementById
+const inputRoom = document.getElementById("rooms");
+const displayRoom = document.querySelector(".display_room");
 
 let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
 let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
+let roomUser = "";
 let typing = false;
 let connected = false;
 
@@ -32,17 +33,26 @@ document.getElementById("profile").addEventListener("change", function () {
 
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
-  if (inputName.value !== "" & inputName.value.length <= 17) {
+  if (inputName.value !== "" & inputName.value.length <= 17  ) {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
     
+    roomUser = inputRoom.value;
     nameUser = inputName.value.trim();
     socket.emit('add_user', nameUser, localStorage.getItem("src"));
     socket.emit('login', nameUser);
-    socket.emit("sendNickname", nameUser, localStorage.getItem("src"))
+    socket.emit("sendNickname", nameUser)
 
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
+
+    if (inputRoom.value !== "") {
+      localStorage.setItem("room", roomUser)
+    } else {
+      localStorage.setItem("room", "general");
+    }
+
+    socket.emit("sendData", localStorage.getItem("room"), localStorage.getItem("id"))
     profileUser()
   }
 });
@@ -128,6 +138,12 @@ function saveProfile() {
   }  else {
     chatPage.classList.add("hidden");
     homePage.classList.remove("hidden");
+  }
+}
+
+function showRoom() {
+  if(localStorage.getItem("room")) {
+    displayRoom.innerHTML = localStorage.getItem("room");
   }
 }
 
@@ -270,33 +286,39 @@ function userJoinLeftUI(username, image, type) {
     `
   }
 
-  popUpSounds("notif", "wav")
 
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
-  }, 4000);
+  }, 4500);
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  saveProfile()
+  saveProfile();
+  showRoom();
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
     saveAllMessage()
     window.scrollTo(0, document.body.scrollHeight);
   } 
 })
 
-
 const contJoinUser = document.querySelector(".status_user");
 socket.on('add_user', (data) => {
   userJoinLeftUI(data.name, data.image, true);
+  popUpSounds("notif", "wav")
 });
 
 socket.on("userLeft", (data) => {
   if(data.name !== undefined ) {
     if(data.image !== undefined) {
       userJoinLeftUI(data.name, data.image, false);
+      popUpSounds("notif", "wav")
     } else {
+      popUpSounds("notif", "wav")
       userJoinLeftUI(data.name, "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png", false)
     }
   }
+})
+
+socket.on("sendData", (data) => {
+  console.log(JSON.stringify(data));
 })
