@@ -130,6 +130,7 @@ function saveProfile() {
     homePage.classList.remove("hidden");
   }
 }
+
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
   let time = new Date();
@@ -160,6 +161,7 @@ formChat.addEventListener('submit', function (e) {
     allUser.push(data)
     localStorage.setItem("all_user", JSON.stringify(allUser))
 
+    
     socket.emit("message", data)
     saveAllMessage();
     window.scrollTo(0, document.body.scrollHeight);
@@ -181,10 +183,11 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   // local data broadcast
   saveUserBroadcast.push(broadcast_data);
   localStorage.setItem("user_broadcast", JSON.stringify(saveUserBroadcast));
-
+  
   // global data
   allUser.push(broadcast_data);
   localStorage.setItem("all_user", JSON.stringify(allUser))
+
   
   // let broadcast = document.createElement("li");
   // broadcast.classList.add("world");
@@ -201,8 +204,9 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   //   </div> 
   // <div>
   // `;
-  
+
   saveAllMessage()
+  popUpSounds("chat", "wav")
 
   window.scrollTo(0, document.body.scrollHeight);
 })
@@ -232,8 +236,8 @@ function saveAllMessage() {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-function popUpSounds() {
-  const audio = new Audio("./sounds/pop.mp3");
+function popUpSounds(song , type) {
+  const audio = new Audio(`./sounds/${song}.${type}`);
   audio.play()
 }
 
@@ -288,13 +292,15 @@ socket.on('add_user', (data) => {
   // `;
   // contJoinUser.appendChild(joinP);
   userJoinLeftUI(data.name, data.image, true);
+  popUpSounds("pop", "mp3")
 });
 
 socket.on("userLeft", (data) => {
-  if(data.name !== undefined) {
+  if(data.name !== undefined && data.image !== undefined) {
     // const leftP = document.createElement("p");  
     // leftP.innerHTML = `${data.name} left the room`
     // contJoinUser.appendChild(leftP);
-    console.log(JSON.stringify(data));
-  }
+    userJoinLeftUI(data.name, data.image, false);
+    console.log(JSON.stringify(data))
+  } 
 })

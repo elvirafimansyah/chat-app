@@ -16,12 +16,12 @@ io.on('connection', (socket) => {
 
   socket.on("sendNickname", (username, image) => {
     socket.username = username;
-    socket.image = image;
     user_nickname.push(socket.username)
   })
 
 
   socket.on('add_user', (username, image) => {
+    socket.image = image;
     addedUser = true;
     totalUsers++;
     socket.emit("login", {name: username})
