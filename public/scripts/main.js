@@ -11,6 +11,7 @@ const homePage = document.getElementById("home_page");
 const alertCopy = document.getElementById("toast-success");
 const inputRoom = document.getElementById("rooms");
 const displayRoom = document.querySelector(".display_room");
+const containerCopy = document.getElementById("containerCopy");
 
 let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
 let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
@@ -49,7 +50,7 @@ formName.addEventListener("submit", (e) => {
     if (inputRoom.value !== "") {
       localStorage.setItem("room", roomUser)
     } else {
-      localStorage.setItem("room", "general");
+      localStorage.setItem("room", "General");
     }
 
     socket.emit("sendData", localStorage.getItem("room"), localStorage.getItem("id"))
@@ -58,11 +59,42 @@ formName.addEventListener("submit", (e) => {
 });
 
 function copyText(text) {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <div id="toast-success"
+      class="flex fixed  sm:top-2 sm:right-2 items-center p-4 mb-4 w-full max-w-xs rounded-lg shadow text-gray-800 bg-gray-50 "
+      role="alert">
+      <div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8  rounded-lg bg-teal-500 text-teal-50">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+          <path
+            d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
+          <path
+            d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z" />
+        </svg>
+        <span class="sr-only">Check icon</span>
+      </div>
+      <div class="ml-3 text-sm font-normal">ID User Copied</div>
+      <button type="button"
+        class="ml-auto -mx-1.5 -my-1.5 bg-gray-100 text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5  inline-flex h-8 w-8 "
+        data-dismiss-target="#toast-success" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  `
+  
+  containerCopy.appendChild(div);
+
   navigator.clipboard.writeText(text).then(() => {
-    alertCopy.classList.remove("hidden");
+    containerCopy.classList.remove("hidden");
     
     setTimeout(() => {
-      alertCopy.classList.toggle('hidden');
+      containerCopy.classList.toggle('hidden');
     }, 2500);
   })
 }
@@ -143,7 +175,10 @@ function saveProfile() {
 
 function showRoom() {
   if(localStorage.getItem("room")) {
-    displayRoom.innerHTML = localStorage.getItem("room");
+    displayRoom.innerHTML = `#${localStorage.getItem("room")}`
+  } else {
+    localStorage.setItem("room", "General");
+    showRoom();
   }
 }
 
@@ -322,3 +357,4 @@ socket.on("userLeft", (data) => {
 socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
+
