@@ -83,7 +83,7 @@
     <div class="w-full h-full">
       <div class="flex">
         <div class="z-10">
-          <div class="w-64 xl:w-72 absolute sm:fixed z-1 top-0 left-0 bg-slate-100 min-h-screen md:h-full flex-col justify-between hidden sm:flex">
+          <div class="w-64 xl:w-72 absolute sm:fixed z-1 top-0 left-0 bg-slate-100 min-h-screen md:h-full flex-col justify-between hidden sm:flex border-r border-slate-200">
             <div class="px-8">
               <a href="/" class="flex items-center py-4">
                 <img src="assets/chat.png" class="w-10 h-10 m-2" alt="logo">&nbsp;
@@ -121,7 +121,7 @@
           <div class="w-64 z-40 absolute bg-slate-100 shadow min-h-screen md:h-full flex-col justify-between sm:hidden transition duration-150 ease-in-out"
             id="mobile-nav">
             <button aria-label="toggle sidebar" id="openSideBar"
-              class="h-10 w-10 bg-teal-500  absolute right-0 top-3 -mr-[3.5rem] flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800"
+              class="h-10 w-10 bg-teal-500 fixed right-0 top-3 -mr-[3.5rem] flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800"
               onclick="sidebarHandler(true)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-list"
                 viewBox="0 0 16 16">
@@ -144,22 +144,22 @@
                 <span class="self-center text-xl font-semibold whitespace-nowrap ">Emore Chat</span>
               </a>
               <ul >
-                  <div class="flex justify-center  mb-4 w-full">
-                    <div class="relative">
-                      <div class="text-gray-800 absolute ml-4 inset-0 m-auto w-4 h-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="16" height="16"
-                          viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
-                          stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z"></path>
-                          <circle cx="10" cy="10" r="7"></circle>
-                          <line x1="21" y1="21" x2="15" y2="15"></line>
-                        </svg>
-                      </div>
-                      <input
-                        class="bg-gray-700 focus:outline-none focus:ring-1 focus:ring-teal-600 rounded w-full text-sm text-gray-800 placeholder-gray-500 bg-white pl-12 py-2 border-none"
-                        type="text" placeholder="Search Room" />
+                <div class="flex justify-center  mb-4 w-full">
+                  <div class="relative">
+                    <div class="text-gray-800 absolute ml-4 inset-0 m-auto w-4 h-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="16" height="16"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                        <circle cx="10" cy="10" r="7"></circle>
+                        <line x1="21" y1="21" x2="15" y2="15"></line>
+                      </svg>
                     </div>
+                    <input
+                      class="bg-white focus:outline-none focus:ring-1 focus:ring-teal-600 rounded w-full text-sm text-gray-800 placeholder-gray-500 bg-white pl-12 py-2 border-none"
+                      type="text" placeholder="Search Room" />
                   </div>
+                </div>
                 <li>
                   <a href="javascript:void(0)"
                     class="flex w-full justify-between cursor-pointer bg-slate-200 rounded-md font-medium cursor-pointer items-center mb-6 p-3">
@@ -173,40 +173,16 @@
         <!-- Sidebar ends -->
         <div class="container mx-auto py-16 sm:py-5 h-64 ">
           <!-- Profile User -->
-          <div class="absolute top-10 right-0 " id="profile_mobile_user">
-            <div class="hover:bg-glass-2 flex items-center px-3 py-1.5 rounded-md sm:hidden" >
-              <h1 class=" hover:cursor-default font-medium" id="profile_name">hello &nbsp;</h1>
-              <img type="button" class="w-8 h-8 rounded-full cursor-pointer"
-                src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" data-dropdown-toggle="userDropdown"
-                data-dropdown-placement="bottom-start" id="profile_img">
-            </div>
-            <div id="userDropdown" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow ">
-              <ul class="py-1 text-sm text-gray-700 divide-y divide-gray-100 " aria-labelledby="multiLevelDropdownButton">
-                <li>
-                  <a href="javascript:void(0)" class="block py-2 px-4 hover:bg-gray-100 break-all" id="profile_id">ID</a>
-                </li>
-                <li class="signout_mobile_btn">
-                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 flex items-center justify-between"><span>Sign out</span><svg
-                      xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626" class="bi bi-box-arrow-in-right"
-                      viewBox="0 0 16 16">
-                      <path fill-rule="evenodd"
-                        d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
-                      <path fill-rule="evenodd"
-                        d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
-                    </svg> </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="sm:pl-56 md:pl-[16.5rem]" id="home_chat_page">
-            <nav class="bg-slate-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded ">
+          <div class="sm:pl-56 md:pl-[16.5rem] " id="home_chat_page">
+            <nav class="bg-slate-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded fixed w-full sm:top-0 right-0">
               <div class="container flex flex-wrap items-center justify-between mx-auto">
-                <div class="flex items-center">
+                <div class="hidden sm:inline sm:opacity-0"></div>
+                <div class="flex items-center lg:mr-28 xl:mr-40 sm:ml-40 md:ml-28 lg:ml-0">
                   Room 1
                 </div>
-                <div class="flex md:order-2">
+                <div class="flex sm:order-2">
                   <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false"
-                    class="sm:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200  rounded-lg text-sm p-2.5 mr-1">
+                    class="sm:hidden text-gray-500  hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200  rounded-lg text-sm p-2.5 mr-1">
                     <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                       xmlns="http://www.w3.org/2000/svg">
                       <path fill-rule="evenodd"
@@ -215,6 +191,31 @@
                     </svg>
                     <span class="sr-only">Search</span>
                   </button>
+                  <div id="profile_mobile_user">
+                    <div class="hover:bg-glass-2 flex items-center px-3 py-1.5 rounded-md sm:hidden">
+                      <h1 class=" hover:cursor-default font-medium" id="profile_name">hello &nbsp;</h1>
+                      <img type="button" class="w-8 h-8 rounded-full cursor-pointer"
+                        src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" data-dropdown-toggle="userDropdown"
+                        data-dropdown-placement="bottom-start" id="profile_img">
+                    </div>
+                    <div id="userDropdown" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow ">
+                      <ul class="py-1 text-sm text-gray-700 divide-y divide-gray-100 " aria-labelledby="multiLevelDropdownButton">
+                        <li>
+                          <a href="javascript:void(0)" class="block py-2 px-4 hover:bg-gray-100 break-all" id="profile_id">ID</a>
+                        </li>
+                        <li class="signout_mobile_btn">
+                          <a href="#" class="block py-2 px-4 hover:bg-gray-100 flex items-center justify-between"><span>Sign
+                              out</span><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#dc2626"
+                              class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd"
+                                d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
+                              <path fill-rule="evenodd"
+                                d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+                            </svg> </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                   <div class="relative hidden sm:block">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                       <svg class="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
@@ -241,7 +242,7 @@
                       </svg>
                     </div>
                     <input type="text" id="search-navbar"
-                      class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Search...">
                   </div>
                 </div>
@@ -251,8 +252,8 @@
             <p class="left_user"></p>
             <ul id="messages" class="list-none pb-20 p-0"></ul>
           </div>
-          <div class="fixed bottom-0 w-full bg-gray-50  ">
-            <form  id="form_chat" class="w-full relative">
+          <div class="fixed bottom-0 w-full bg-gray-50">
+            <form  id="form_chat" class="w-full relative border-t border-slate-200">
               <label for="chat" class="sr-only">Your message</label>
               <div class="flex items-center px-3 py-2 rounded-lg sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem]" >
                 <button type="button"
@@ -286,7 +287,6 @@
       </div>
     </div>
   </section>
-  
   <!-- alert copy -->
   <div id="toast-success"
     class="flex fixed bottom-4 sm:top-2 sm:right-2 items-center p-4 mb-4 w-full max-w-xs rounded-lg shadow text-gray-800 bg-gray-50 hidden"
