@@ -24,7 +24,7 @@ const preview = document.getElementById("preview-profile");
 document.getElementById("profile").addEventListener("change", function () {
   const reader = new FileReader();
   reader.addEventListener("load", () => {
-    localStorage.setItem("src", reader.result)
+    localStorage.setItem("src", reader.result);
     preview.src = reader.result;
   })
   reader.readAsDataURL(this.files[0])
@@ -37,9 +37,9 @@ formName.addEventListener("submit", (e) => {
     homePage.classList.add("hidden");
     
     nameUser = inputName.value.trim();
-    socket.emit('add_user', nameUser);
+    socket.emit('add_user', nameUser, localStorage.getItem("src"));
     socket.emit('login', nameUser);
-    socket.emit("sendNickname", nameUser)
+    socket.emit("sendNickname", nameUser, localStorage.getItem("src"))
 
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
@@ -50,12 +50,12 @@ formName.addEventListener("submit", (e) => {
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => {
     alertCopy.classList.remove("hidden");
+    
     setTimeout(() => {
       alertCopy.classList.toggle('hidden');
     }, 2500);
   })
 }
-
 
 function profileUser() {
   const profileData = {
@@ -84,7 +84,7 @@ function profileUser() {
   const profileID = document.querySelector("#profile_id");
   function mobileUserProfile(name, image, id) {
     name.innerHTML = profileData.name;
-    image.innerHTML = profileData.image;
+    image.src = profileData.image;
     id.innerHTML = profileData.id;
   }
   mobileUserProfile(document.querySelector("#profile_name"), document.querySelector("#profile_img"), profileID)
@@ -110,6 +110,7 @@ function profileUser() {
   const idText = profileUserContainer.querySelector(".id_text");
   idText.addEventListener("click", () => {
     copyText(idText.innerText);
+    
   });
   profileID.addEventListener("click", () => {
     copyText(profileID.innerText);
@@ -124,7 +125,7 @@ function saveProfile() {
     profileUser();
   } else if(!localStorage.getItem("src")) {
     localStorage.setItem("src", "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png")
-  } else {
+  }  else {
     chatPage.classList.add("hidden");
     homePage.classList.remove("hidden");
   }
@@ -231,6 +232,45 @@ function saveAllMessage() {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
+function popUpSounds() {
+  const audio = new Audio("./sounds/pop.mp3");
+  audio.play()
+}
+
+function userJoinLeftUI(username, image, type) {
+  const containerUser = document.getElementById("alert_notif_user");
+  containerUser.classList.remove("hidden");
+
+  const notifContainer = document.getElementById("user_notifcation");
+  if(type) {
+    notifContainer.innerHTML = `
+      <div class="inline-block relative shrink-0">
+        <img class="w-12 h-12 rounded-full" src="${image}" alt="${username} image" />
+      </div>
+      <div class="ml-3 text-sm font-normal">
+        <div class="text-sm font-semibold text-gray-900 ">${username}</div>
+        <div class="text-sm font-normal">joined the room</div>
+        <span class="text-xs font-medium text-teal-600 ">just now</span>
+      </div>
+    `
+  } else {
+    notifContainer.innerHTML = `
+      <div class="inline-block relative shrink-0">
+        <img class="w-12 h-12 rounded-full" src="${image}" alt="${username} image" />
+      </div>
+      <div class="ml-3 text-sm font-normal">
+        <div class="text-sm font-semibold text-gray-900 ">${username}</div>
+        <div class="text-sm font-normal"> left the room</div>
+        <span class="text-xs font-medium text-teal-600 ">just now</span>
+      </div>
+    `
+  }
+
+  setTimeout(() => {
+    containerUser.classList.add("hidden"); 
+  }, 4000);
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile()
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
@@ -239,18 +279,22 @@ document.addEventListener("DOMContentLoaded", () => {
   } 
 })
 
-socket.on('add_user', (username) => {
-  const joinP = document.createElement('p');
-  joinP.innerHTML = `${username.name} joined the server`;
-  const contJoinUser = document.querySelector(".join_user");
-  contJoinUser.appendChild(joinP);
+
+const contJoinUser = document.querySelector(".status_user");
+socket.on('add_user', (data) => {
+  // const joinP = document.createElement('p');
+  // joinP.innerHTML = `
+  //   <img src="${data.image}" class="w-10 w-10 rounded-full" />${data.name} joined the server
+  // `;
+  // contJoinUser.appendChild(joinP);
+  userJoinLeftUI(data.name, data.image, true);
 });
 
 socket.on("userLeft", (data) => {
   if(data.name !== undefined) {
-    const leftP = document.createElement("p");  
-    leftP.innerHTML = `${data.name} left the room`
-    const containerLeft = document.querySelector(".left_user");
-    containerLeft.appendChild(leftP);
+    // const leftP = document.createElement("p");  
+    // leftP.innerHTML = `${data.name} left the room`
+    // contJoinUser.appendChild(leftP);
+    console.log(JSON.stringify(data));
   }
 })

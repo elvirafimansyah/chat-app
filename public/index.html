@@ -78,8 +78,6 @@
     </div>
   </div>
   <section id="chat_page" class="hidden">
-  
-
     <div class="w-full h-full">
       <div class="flex">
         <div class="z-10">
@@ -120,15 +118,7 @@
           </div>
           <div class="w-64 z-40 absolute bg-slate-100 shadow min-h-screen md:h-full flex-col justify-between sm:hidden transition duration-150 ease-in-out"
             id="mobile-nav">
-            <button aria-label="toggle sidebar" id="openSideBar"
-              class="h-10 w-10 bg-teal-500 fixed right-0 top-3 -mr-[3.5rem] flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800"
-              onclick="sidebarHandler(true)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-list"
-                viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-              </svg>
-            </button>
+            
             <button aria-label="Close sidebar" id="closeSideBar"
               class="hidden h-10 w-10 bg-teal-500 absolute right-0 top-2 -mr-10 flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer text-white"
               onclick="sidebarHandler(false)">
@@ -174,10 +164,18 @@
         <div class="container mx-auto py-16 sm:py-5 h-64 ">
           <!-- Profile User -->
           <div class="sm:pl-56 md:pl-[16.5rem] " id="home_chat_page">
-            <nav class="bg-slate-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded fixed w-full sm:top-0 right-0">
+            <nav class="bg-slate-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded fixed w-full top-0 right-0">
               <div class="container flex flex-wrap items-center justify-between mx-auto">
                 <div class="hidden sm:inline sm:opacity-0"></div>
                 <div class="flex items-center lg:mr-28 xl:mr-40 sm:ml-40 md:ml-28 lg:ml-0">
+                  <button aria-label="toggle sidebar" id="openSideBar"
+                    class="h-10 w-10 bg-teal-500 sm:hidden  flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800 mr-2 sm:mr-0"
+                    onclick="sidebarHandler(true)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-list" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd"
+                        d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                  </button>
                   Room 1
                 </div>
                 <div class="flex sm:order-2">
@@ -248,9 +246,10 @@
                 </div>
               </div>
             </nav>
-            <p class="join_user"></p>
-            <p class="left_user"></p>
-            <ul id="messages" class="list-none pb-20 p-0"></ul>
+            <div class="sm:pt-12 pb-20">
+              <p class="status_user"></p>
+              <ul id="messages" class="list-none"></ul>
+            </div>
           </div>
           <div class="fixed bottom-0 w-full bg-gray-50">
             <form  id="form_chat" class="w-full relative border-t border-slate-200">
@@ -267,7 +266,7 @@
                   <span class="sr-only">Upload image</span>
                 </button>
                 <input id="chat"  
-                  class="block mx-4 p-2.5 w-full sm:w-5/12 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-teal-500 focus:border-teal-500 "
+                  class="block mx-4 p-2.5 w-full sm:w-5/12 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg  focus:ring-teal-500 focus:border-teal-500 focus:outline-none border border-slate-200 "
                   placeholder="Your message..." required>
                   
                 <button type="submit"
@@ -289,7 +288,7 @@
   </section>
   <!-- alert copy -->
   <div id="toast-success"
-    class="flex fixed bottom-4 sm:top-2 sm:right-2 items-center p-4 mb-4 w-full max-w-xs rounded-lg shadow text-gray-800 bg-gray-50 hidden"
+    class="flex fixed  sm:top-2 sm:right-2 items-center p-4 mb-4 w-full max-w-xs rounded-lg shadow text-gray-800 bg-gray-50 hidden"
     role="alert">
     <div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8  rounded-lg bg-teal-500 text-teal-50">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -314,6 +313,29 @@
     </button>
   </div>
   <!-- End Alert Copy -->
+  <div class="alert-user absolute top-2 right-2 hidden" id="alert_notif_user">
+    <div id="toast-notification"
+      class="p-4 w-full max-w-xs text-gray-900 bg-white rounded-lg shadow-md border border-slate-100" role="alert">
+      <div class="flex items-center mb-3">
+        <span class="mb-1 text-sm font-semibold text-gray-900 ">New User</span>
+        <button type="button"
+          class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8"
+          data-dismiss-target="#toast-notification" aria-label="Close">
+          <span class="sr-only">Close</span>
+          <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center" id="user_notifcation">
+        
+      </div>
+    </div>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/sideBar.js"></script>

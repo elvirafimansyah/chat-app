@@ -4,28 +4,30 @@ const path = require('path');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = process.env.PORT || 3000;
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 let totalUsers = 0;
-let users = [];
+let user_nickname = [];
+let user_image = [];
+
 io.on('connection', (socket) => {
   let addedUser = false;
   console.log('a user connected');
 
-  socket.on("sendNickname", (username) => {
+  socket.on("sendNickname", (username, image) => {
     socket.username = username;
-    users.push(socket.username);
+    socket.image = image;
+    user_nickname.push(socket.username)
   })
 
-  console.log(users)
-  socket.on('add_user', (username) => {
-    socket.username = username;
+
+  socket.on('add_user', (username, image) => {
     addedUser = true;
     totalUsers++;
     socket.emit("login", {name: username})
-    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers });
-  });
+    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image });
+  })
+  
   socket.on('message', (data) => {
     const { name, message, image, hour,  minutes, info_time, id } = data;
     socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id);
@@ -34,9 +36,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     totalUsers--;
+    console.log(socket.image);
     socket.broadcast.emit('userLeft', {
       name: socket.username, 
-      totalUser: totalUsers
+      totalUser: totalUsers, 
+      image: socket.image
     })
   });
 });
