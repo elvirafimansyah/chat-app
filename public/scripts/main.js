@@ -270,6 +270,8 @@ function userJoinLeftUI(username, image, type) {
     `
   }
 
+  popUpSounds("pop", "mp3")
+
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
   }, 4000);
@@ -292,15 +294,16 @@ socket.on('add_user', (data) => {
   // `;
   // contJoinUser.appendChild(joinP);
   userJoinLeftUI(data.name, data.image, true);
-  popUpSounds("pop", "mp3")
 });
 
 socket.on("userLeft", (data) => {
-  if(data.name !== undefined && data.image !== undefined) {
+  if(data.name !== undefined ) {
     // const leftP = document.createElement("p");  
     // leftP.innerHTML = `${data.name} left the room`
     // contJoinUser.appendChild(leftP);
     userJoinLeftUI(data.name, data.image, false);
     console.log(JSON.stringify(data))
-  } 
+  }  else {
+    console.log(JSON.stringify(data))
+  }
 })
