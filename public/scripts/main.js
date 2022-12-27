@@ -270,7 +270,7 @@ function userJoinLeftUI(username, image, type) {
     `
   }
 
-  popUpSounds("pop", "mp3")
+  popUpSounds("notif", "wav")
 
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
@@ -288,22 +288,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const contJoinUser = document.querySelector(".status_user");
 socket.on('add_user', (data) => {
-  // const joinP = document.createElement('p');
-  // joinP.innerHTML = `
-  //   <img src="${data.image}" class="w-10 w-10 rounded-full" />${data.name} joined the server
-  // `;
-  // contJoinUser.appendChild(joinP);
   userJoinLeftUI(data.name, data.image, true);
 });
 
 socket.on("userLeft", (data) => {
   if(data.name !== undefined ) {
-    // const leftP = document.createElement("p");  
-    // leftP.innerHTML = `${data.name} left the room`
-    // contJoinUser.appendChild(leftP);
-    userJoinLeftUI(data.name, data.image, false);
-    console.log(JSON.stringify(data))
-  }  else {
-    console.log(JSON.stringify(data))
+    if(data.image !== undefined) {
+      userJoinLeftUI(data.name, data.image, false);
+    } else {
+      userJoinLeftUI(data.name, "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png", false)
+    }
   }
 })
