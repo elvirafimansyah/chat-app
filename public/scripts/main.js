@@ -53,7 +53,9 @@ formName.addEventListener("submit", (e) => {
       localStorage.setItem("room", "General");
     }
 
-    socket.emit("sendData", localStorage.getItem("room"), localStorage.getItem("id"))
+    
+    socket.emit("      sendData", localStorage.getItem("room"), localStorage.getItem("id"))
+    socket.emit("join-room", roomUser);
     profileUser()
   }
 });
@@ -176,9 +178,6 @@ function saveProfile() {
 function showRoom() {
   if(localStorage.getItem("room")) {
     displayRoom.innerHTML = `#${localStorage.getItem("room")}`
-  } else {
-    localStorage.setItem("room", "General");
-    showRoom();
   }
 }
 
@@ -201,26 +200,29 @@ formChat.addEventListener('submit', function (e) {
       hour: time.getHours(),
       minutes: time.getMinutes(),
       info_time: timeStatus,
-      id: localStorage.getItem("id")
+      id: localStorage.getItem("id"),
+      room: localStorage.getItem("room")
     }
 
     // local data
-    saveUser.push(data);
-    localStorage.setItem("data_user", JSON.stringify(saveUser));
-
-    // global data
-    allUser.push(data)
-    localStorage.setItem("all_user", JSON.stringify(allUser))
+    if(localStorage.getItem("room") === "General") {
+      saveUser.push(data);
+      localStorage.setItem("data_user", JSON.stringify(saveUser));
+  
+      // global data
+      allUser.push(data)
+      localStorage.setItem("all_user", JSON.stringify(allUser))
+    } else 
 
     
-    socket.emit("message", data)
+    socket.emit("message", data, localStorage.getItem("room"))
     saveAllMessage();
     window.scrollTo(0, document.body.scrollHeight);
     input.value = '';
   }
 });
 
-socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
+socket.on("message", (name, message, image, hour, minutes, info_time, id, room) => {
   let broadcast_data = {
     name: name,
     message: message,
@@ -229,6 +231,7 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
     minutes: minutes,
     info_time: info_time,
     id: id,
+    room: room
   }
 
   // local data broadcast
@@ -238,7 +241,6 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   // global data
   allUser.push(broadcast_data);
   localStorage.setItem("all_user", JSON.stringify(allUser))
-
   
   // let broadcast = document.createElement("li");
   // broadcast.classList.add("world");
@@ -256,10 +258,14 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   // <div>
   // `;
 
-  saveAllMessage()
+  saveAllMessage();
   popUpSounds("chat", "wav")
 
   window.scrollTo(0, document.body.scrollHeight);
+})
+
+socket.on("private message", (name, message, image, hour, minutes, info_time, id) => {
+  console.log(name, message, image, hour, minutes, info_time, id);
 })
 
 
@@ -285,6 +291,46 @@ function saveAllMessage() {
     messageUser.appendChild(allMessage);
   })
   window.scrollTo(0, document.body.scrollHeight);
+}
+
+function privateMessage(data) {
+  messageUser.innerHTML = "";
+  const privateList = document.createElement("li"); 
+  privateList.innerHTML = `
+    <div class="flex items-center" data-id="${data.id}">
+      <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+        <div class="flex items-center ">
+          <p class="text-lg font-medium">${data.name}</p>&nbsp;
+          <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+          &nbsp;
+          <span>${data.info_time}</span>
+        </div>
+        <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+      </div>
+    <div>
+  `
+
+  messageUser.appendChild(privateList);
+}
+
+function broadcastMessage(data) {
+  messageUser.innerHTML = "";
+  const broadcastList = document.createElement("li");
+  broadcastList.innerHTML = `
+    <div class="flex items-center" data-id="${data.id}">
+      <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+        <div class="flex items-center ">
+          <p class="text-lg font-medium">${data.name}</p>&nbsp;
+          <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+          &nbsp;
+          <span>${data.info_time}</span>
+        </div>
+        <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+      </div>
+    <div>
+  `
+
+  messageUser.appendChild(broadcastList);
 }
 
 function popUpSounds(song , type) {

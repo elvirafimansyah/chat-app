@@ -24,12 +24,6 @@ io.on('connection', (socket) => {
     socket.userid = id;
     socket.emit("sendData", {room: socket.room, id: socket.userid});
   });
-  
-  console.log(socket.rooms);
-  // socket.on("private message", (to, message) => {
-    
-  // });
-
 
   socket.on('add_user', (username, image) => {
     socket.image = image;
@@ -40,10 +34,19 @@ io.on('connection', (socket) => {
     socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image });
   })
   
-  socket.on('message', (data) => {
-    const { name, message, image, hour,  minutes, info_time, id } = data;
-    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id);
+  socket.on('message', (data, room) => {
+    const { name, message, image, hour,  minutes, info_time, id, room_user } = data;
+    if (room === "General") {
+      socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, room_user);
+    } else {
+      socket.to(room).emit("message", name, message, image, hour, minutes, info_time, id, room_user);
+    }
   });
+
+  socket.on("join-room", room => {
+    socket.join(room);
+    console.log(room);
+  }); 
 
   socket.on('disconnect', () => {
     totalUsers--;
