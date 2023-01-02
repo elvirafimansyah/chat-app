@@ -38,7 +38,6 @@ formName.addEventListener("submit", (e) => {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
     
-    roomUser = inputRoom.value;
     nameUser = inputName.value.trim();
     socket.emit('add_user', nameUser, localStorage.getItem("src"));
     socket.emit('login', nameUser);
@@ -47,14 +46,6 @@ formName.addEventListener("submit", (e) => {
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
 
-    if (inputRoom.value !== "") {
-      localStorage.setItem("room", roomUser)
-    } else {
-      localStorage.setItem("room", "General");
-    }
-
-    
-    socket.emit("      sendData", localStorage.getItem("room"), localStorage.getItem("id"))
     socket.emit("join-room", roomUser);
     profileUser()
   }
@@ -175,11 +166,6 @@ function saveProfile() {
   }
 }
 
-function showRoom() {
-  if(localStorage.getItem("room")) {
-    displayRoom.innerHTML = `#${localStorage.getItem("room")}`
-  }
-}
 
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
@@ -201,28 +187,25 @@ formChat.addEventListener('submit', function (e) {
       minutes: time.getMinutes(),
       info_time: timeStatus,
       id: localStorage.getItem("id"),
-      room: localStorage.getItem("room")
     }
 
+    socket.emit("message", data)
     // local data
-    if(localStorage.getItem("room") === "General") {
-      saveUser.push(data);
-      localStorage.setItem("data_user", JSON.stringify(saveUser));
-  
-      // global data
-      allUser.push(data)
-      localStorage.setItem("all_user", JSON.stringify(allUser))
-    } else 
+    saveUser.push(data);
+    localStorage.setItem("data_user", JSON.stringify(saveUser));
 
+
+    // global data
+    allUser.push(data)
+    localStorage.setItem("all_user", JSON.stringify(allUser))
     
-    socket.emit("message", data, localStorage.getItem("room"))
     saveAllMessage();
     window.scrollTo(0, document.body.scrollHeight);
     input.value = '';
   }
 });
 
-socket.on("message", (name, message, image, hour, minutes, info_time, id, room) => {
+socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
   let broadcast_data = {
     name: name,
     message: message,
@@ -231,7 +214,6 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, room) 
     minutes: minutes,
     info_time: info_time,
     id: id,
-    room: room
   }
 
   // local data broadcast
@@ -275,18 +257,54 @@ function saveAllMessage() {
     let allMessage = document.createElement("li");
     allMessage.classList.add("chat_list");
     allMessage.innerHTML = `
-      <div class="flex items-center" data-id="${data.id}">
-        <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-          <div class="flex items-center ">
-            <p class="text-lg font-medium">${data.name}</p>&nbsp;
-            <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-            &nbsp;
-            <span>${data.info_time}</span>
-          </div>
-          <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-        </div> 
-      <div>
-      `;
+      <div class="flex justify-between items-center " id="container"">
+        <div class="flex items-center" data-id="${data.id}">
+          <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+            <div class="flex items-center ">
+              <p class="text-lg font-medium">${data.name}</p>&nbsp;
+              <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+              &nbsp;
+              <span>${data.info_time}</span>
+            </div>
+            <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+          </div> 
+        <div>
+        <button type="button"
+          class="p-2.5 text-sm font-medium text-white bg-red-500 rounded-lg border border-red-600 hover:bg-red-700 focus:outline-none hidden absolute right-2" title="delete message"
+          id="deleteBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+            viewBox="0 0 16 16">
+            <path
+              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+            <path fill-rule="evenodd"
+              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+          </svg>
+        </button>
+      </div>
+    `;  
+
+    const containerMessage = allMessage.querySelector("#container");
+    const deleteBtn = allMessage.querySelector("#deleteBtn");
+
+    containerMessage.addEventListener("mouseover",  () => {
+      deleteBtn.classList.remove("hidden");
+    })
+    containerMessage.addEventListener("mouseout", () => {
+      deleteBtn.classList.add("hidden");
+    })
+
+    // Delete Function
+    deleteBtn.addEventListener("click", (index) => {
+      console.log(index);
+      allUser = allUser.filter(e => {
+        if(e != data) {
+          return index
+        }
+      })
+
+      localStorage.setItem("all_user", JSON.stringify(allUser))
+      saveAllMessage()
+    });
 
     messageUser.appendChild(allMessage);
   })
@@ -375,7 +393,6 @@ function userJoinLeftUI(username, image, type) {
 
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
-  showRoom();
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
     saveAllMessage()
     window.scrollTo(0, document.body.scrollHeight);

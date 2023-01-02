@@ -34,19 +34,15 @@ io.on('connection', (socket) => {
     socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image });
   })
   
-  socket.on('message', (data, room) => {
+  socket.on('message', (data) => {
     const { name, message, image, hour,  minutes, info_time, id, room_user } = data;
-    if (room === "General") {
-      socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, room_user);
-    } else {
-      socket.to(room).emit("message", name, message, image, hour, minutes, info_time, id, room_user);
-    }
+    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, room_user);
   });
 
-  socket.on("join-room", room => {
-    socket.join(room);
-    console.log(room);
-  }); 
+  // socket.on("join-room", room => {
+  //   socket.join(room);
+  //   console.log(room);
+  // }); 
 
   socket.on('disconnect', () => {
     totalUsers--;
