@@ -257,7 +257,7 @@ function saveAllMessage() {
     let allMessage = document.createElement("li");
     allMessage.classList.add("chat_list");
     allMessage.innerHTML = `
-      <div class="flex justify-between items-center " id="container"">
+      <div class="flex justify-between items-center " id="container_message"">
         <div class="flex items-center" data-id="${data.id}">
           <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
             <div class="flex items-center ">
@@ -266,7 +266,7 @@ function saveAllMessage() {
               &nbsp;
               <span>${data.info_time}</span>
             </div>
-            <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
+            <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p>
           </div> 
         <div>
         <button type="button"
@@ -283,7 +283,8 @@ function saveAllMessage() {
       </div>
     `;  
 
-    const containerMessage = allMessage.querySelector("#container");
+    messageUser.appendChild(allMessage);
+    const containerMessage = allMessage.querySelector("#container_message");
     const deleteBtn = allMessage.querySelector("#deleteBtn");
 
     containerMessage.addEventListener("mouseover",  () => {
@@ -305,11 +306,27 @@ function saveAllMessage() {
       localStorage.setItem("all_user", JSON.stringify(allUser))
       saveAllMessage()
     });
-
-    messageUser.appendChild(allMessage);
   })
+
+  const containerMessage = document.querySelectorAll("#container_message"); 
+  const searchInput = document.querySelector("#search-navbar");
+  searchInput.addEventListener("keyup", function (event) {
+    const keyword = event.target.value.toLowerCase();
+
+    containerMessage.forEach((row) => {
+      const title = row.querySelector("#message");
+      const status = title.textContent.toLowerCase().startsWith(keyword);
+      if (status) {
+        row.style.display = "block";
+      } else {
+        row.style.display = "none"
+      }
+    })
+  });
+
   window.scrollTo(0, document.body.scrollHeight);
 }
+
 
 function privateMessage(data) {
   messageUser.innerHTML = "";
@@ -384,8 +401,6 @@ function userJoinLeftUI(username, image, type) {
       </div>
     `
   }
-
-
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
   }, 4500);
