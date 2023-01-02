@@ -44,6 +44,10 @@ io.on('connection', (socket) => {
   //   console.log(room);
   // }); 
 
+  socket.on('delete message', function (messageId) {
+    socket.broadcast.emit('delete message', messageId);
+  });
+
   socket.on('disconnect', () => {
     totalUsers--;
     socket.broadcast.emit('userLeft', {
@@ -52,6 +56,8 @@ io.on('connection', (socket) => {
       image: socket.image
     })
   });
+
+  
 });
 
 server.listen(port, () => {

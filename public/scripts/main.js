@@ -296,15 +296,16 @@ function saveAllMessage() {
 
     // Delete Function
     deleteBtn.addEventListener("click", (index) => {
-      console.log(index);
       allUser = allUser.filter(e => {
         if(e != data) {
           return index
         }
+        socket.emit("delete message", e)
       })
 
       localStorage.setItem("all_user", JSON.stringify(allUser))
       saveAllMessage()
+
     });
   })
 
@@ -326,7 +327,6 @@ function saveAllMessage() {
 
   window.scrollTo(0, document.body.scrollHeight);
 }
-
 
 function privateMessage(data) {
   messageUser.innerHTML = "";
@@ -436,3 +436,29 @@ socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
 
+// function removeObjectWithId(arr, id) {
+//   const objWithIdIndex = arr.findIndex((obj) => obj.id === id);
+
+//   if (objWithIdIndex > -1) {
+//     arr.splice(objWithIdIndex, 1);
+//   }
+
+//   return arr;
+// }
+
+// const arr = [
+//   { id: 1, name: 'John' },
+//   { id: 2, name: 'Kate' },
+//   { id: 3, name: 'Peter' },
+// ];
+
+// removeObjectWithId(arr, 2);
+
+socket.on("delete message", (data) => {
+  console.log(data);
+  
+
+  // [ { id: 1, name: 'John' }, { id: 3, name: 'Peter' } ]
+  console.log(arr);
+  // const objIndex = allUser.findIndex((obj) => )
+});
