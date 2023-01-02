@@ -214,6 +214,7 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
     minutes: minutes,
     info_time: info_time,
     id: id,
+    type: "broadcast"
   }
 
   // local data broadcast
@@ -288,7 +289,14 @@ function saveAllMessage() {
     const deleteBtn = allMessage.querySelector("#deleteBtn");
 
     containerMessage.addEventListener("mouseover",  () => {
-      deleteBtn.classList.remove("hidden");
+      console.log(data.name)
+      if(data.name === localStorage.getItem("name")) {
+        deleteBtn.classList.remove("hidden");
+        console.log("gk ada property broadcast")
+      } else {
+        console.log("ada property broadcast");
+      }
+
     })
     containerMessage.addEventListener("mouseout", () => {
       deleteBtn.classList.add("hidden");
@@ -436,29 +444,19 @@ socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
 
-// function removeObjectWithId(arr, id) {
-//   const objWithIdIndex = arr.findIndex((obj) => obj.id === id);
-
-//   if (objWithIdIndex > -1) {
-//     arr.splice(objWithIdIndex, 1);
-//   }
-
-//   return arr;
-// }
-
-// const arr = [
-//   { id: 1, name: 'John' },
-//   { id: 2, name: 'Kate' },
-//   { id: 3, name: 'Peter' },
-// ];
-
-// removeObjectWithId(arr, 2);
-
 socket.on("delete message", (data) => {
   console.log(data);
-  
+  function removeObjectWithMessage(data, message) {
+    const objectWithMessageIndex = data.findIndex((obj) => obj.message === message);
+    if (objectWithMessageIndex > -1) {
+      data.splice(objectWithMessageIndex, 1);
+    }
 
-  // [ { id: 1, name: 'John' }, { id: 3, name: 'Peter' } ]
-  console.log(arr);
-  // const objIndex = allUser.findIndex((obj) => )
+    localStorage.setItem("all_user", JSON.stringify(allUser));
+    saveAllMessage();
+
+    return data;
+  }
+
+  console.log(data.hasOwnProperty("type"));
 });
