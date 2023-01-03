@@ -328,6 +328,7 @@ function saveAllMessage() {
     containerMessage.addEventListener("mouseover",  () => {
       if(data.name === localStorage.getItem("name")) {
         deleteBtn.classList.remove("hidden");
+
       } 
     })
 
@@ -338,16 +339,27 @@ function saveAllMessage() {
 
     // Delete Function
     deleteBtn.addEventListener("click", (index) => {
-      if (confirm('Are you sure you want to delete this message?')) {
-        allUser = allUser.filter(e => {
-          if(e != data) {
-            return index
-          }
-          socket.emit("delete message", e)
-        })
-        localStorage.setItem("all_user", JSON.stringify(allUser))
-        saveAllMessage()
-      }
+      Swal.fire({
+        title: 'Are you sure ?',
+        text: "You won't be able to revert this message!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#0d9488',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete message',
+        iconColor: "#14b8a6"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          allUser = allUser.filter(e => {
+            if (e != data) {
+              return index
+            }
+            socket.emit("delete message", e)
+          })
+          localStorage.setItem("all_user", JSON.stringify(allUser))
+          saveAllMessage()
+        }
+      })
     });
   })
 
