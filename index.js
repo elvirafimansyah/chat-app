@@ -48,6 +48,10 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('delete message', messageId);
   });
 
+  socket.on("edit message", (message) => {
+    // skjksdjaskd
+  })
+
   socket.on('disconnect', () => {
     totalUsers--;
     socket.broadcast.emit('userLeft', {
