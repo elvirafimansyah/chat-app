@@ -251,7 +251,7 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
     minutes: minutes,
     info_time: info_time,
     id: id,
-    type: "broadcast"
+    type: "broadcast",
   }
 
   // local data broadcast
@@ -382,14 +382,15 @@ function saveAllMessage() {
       messageList.focus()
 
       document.addEventListener('keyup', function (event) {
-        const text = messageList.innerText
+        const text = messageList.innerText;
         if (event.key === 'Escape') {
           console.log("press esc")
           messageList.textContent = data.message;
           messageList.setAttribute("contenteditable", "false");
         } else if (event.key === "Enter") {
           if(text.length > 3) {
-            data.message = messageList.innerText;
+            data.message = text;
+            socket.emit('edit message', data);
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
           } else {
@@ -513,7 +514,6 @@ function deleteMessageBroadcast(data, message) {
   return data;
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
@@ -552,3 +552,16 @@ socket.on("userLeft", (data) => {
     }
   }
 })
+
+function editMessageBroadcast(data, message) {
+  const objectWithMessageIndex = data.findIndex((obj) => obj.message === message);
+
+  localStorage.setItem("all_user", JSON.stringify(allUser));
+  saveAllMessage();
+
+  return data;
+}
+
+socket.on("edit message", (data) => {
+  console.log(data);
+});

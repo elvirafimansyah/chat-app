@@ -48,8 +48,8 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('delete message', messageId);
   });
 
-  socket.on("edit message", (message) => {
-    // skjksdjaskd
+  socket.on("edit message", (data) => {
+    socket.broadcast.emit('edit message',data);
   })
 
   socket.on('disconnect', () => {
