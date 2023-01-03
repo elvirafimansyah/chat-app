@@ -20,6 +20,26 @@ let nameUser = "";
 let roomUser = "";
 let typing = false;
 let connected = false;
+let randomPictureArray = [
+  "https://avatars.dicebear.com/api/bottts/.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/a.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/youraa-.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/1.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/j.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/p.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/o.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/r.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/r.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjkl.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklm.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rab.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabcdefghijkl.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklmop.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/e.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklmopqrstuvw.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqr.svg?b=%2314baa6",
+  "https://avatars.dicebear.com/api/bottts/rabc.svg?b=%2314baa6"
+]
 
 // Preview Profile Picture 
 const preview = document.getElementById("preview-profile");
@@ -39,14 +59,20 @@ formName.addEventListener("submit", (e) => {
     homePage.classList.add("hidden");
     
     nameUser = inputName.value.trim();
-    socket.emit('add_user', nameUser, localStorage.getItem("src"));
     socket.emit('login', nameUser);
     socket.emit("sendNickname", nameUser)
-
+    
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
-
+    
     socket.emit("join-room", roomUser);
+    if (!localStorage.getItem("src")) {
+      const randomImage = randomPictureArray[Math.floor(Math.random() * randomPictureArray.length)];
+      localStorage.setItem("src", randomImage)
+    } 
+
+    socket.emit('add_user', nameUser, localStorage.getItem("src"));
+
     profileUser()
   }
 });
@@ -158,8 +184,6 @@ function saveProfile() {
     homePage.classList.add("hidden");
     socket.emit("sendNickname", localStorage.getItem("name"))
     profileUser();
-  } else if(!localStorage.getItem("src")) {
-    localStorage.setItem("src", "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png")
   }  else {
     chatPage.classList.add("hidden");
     homePage.classList.remove("hidden");
@@ -373,7 +397,7 @@ function broadcastMessage(data) {
   messageUser.appendChild(broadcastList);
 }
 
-function popUpSounds(song , type) {
+function popUpSounds(song, type) {
   const audio = new Audio(`./sounds/${song}.${type}`);
   audio.play()
 }
@@ -445,7 +469,7 @@ socket.on("userLeft", (data) => {
       popUpSounds("notif", "wav")
     } else {
       popUpSounds("notif", "wav")
-      userJoinLeftUI(data.name, "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png", false)
+      userJoinLeftUI(data.name, `${broadcast_profile}`, false)
     }
   }
 })
@@ -458,3 +482,8 @@ socket.on("delete message", (data) => {
   console.log(data);
   deleteMessageBroadcast(allUser, data.message)
 });
+
+let broadcast_profile = "";
+socket.on("add_user", (data) => {
+  broadcast_profile = data.image;
+})

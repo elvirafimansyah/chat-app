@@ -56,8 +56,6 @@ io.on('connection', (socket) => {
       image: socket.image
     })
   });
-
-  
 });
 
 server.listen(port, () => {
