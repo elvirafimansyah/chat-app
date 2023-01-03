@@ -289,31 +289,28 @@ function saveAllMessage() {
     const deleteBtn = allMessage.querySelector("#deleteBtn");
 
     containerMessage.addEventListener("mouseover",  () => {
-      console.log(data.name)
       if(data.name === localStorage.getItem("name")) {
         deleteBtn.classList.remove("hidden");
-        console.log("gk ada property broadcast")
-      } else {
-        console.log("ada property broadcast");
-      }
-
+      } 
     })
+
     containerMessage.addEventListener("mouseout", () => {
       deleteBtn.classList.add("hidden");
     })
 
+
     // Delete Function
     deleteBtn.addEventListener("click", (index) => {
-      allUser = allUser.filter(e => {
-        if(e != data) {
-          return index
-        }
-        socket.emit("delete message", e)
-      })
-
-      localStorage.setItem("all_user", JSON.stringify(allUser))
-      saveAllMessage()
-
+      if (confirm('Are you sure you want to delete this message?')) {
+        allUser = allUser.filter(e => {
+          if(e != data) {
+            return index
+          }
+          socket.emit("delete message", e)
+        })
+        localStorage.setItem("all_user", JSON.stringify(allUser))
+        saveAllMessage()
+      }
     });
   })
 
@@ -414,6 +411,19 @@ function userJoinLeftUI(username, image, type) {
   }, 4500);
 };
 
+function deleteMessageBroadcast(data, message) {
+  const objectWithMessageIndex = data.findIndex((obj) => obj.message === message);
+  if (objectWithMessageIndex > -1) {
+    data.splice(objectWithMessageIndex, 1);
+  }
+
+  localStorage.setItem("all_user", JSON.stringify(allUser));
+  saveAllMessage();
+
+  return data;
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
@@ -446,17 +456,5 @@ socket.on("sendData", (data) => {
 
 socket.on("delete message", (data) => {
   console.log(data);
-  function removeObjectWithMessage(data, message) {
-    const objectWithMessageIndex = data.findIndex((obj) => obj.message === message);
-    if (objectWithMessageIndex > -1) {
-      data.splice(objectWithMessageIndex, 1);
-    }
-
-    localStorage.setItem("all_user", JSON.stringify(allUser));
-    saveAllMessage();
-
-    return data;
-  }
-
-  console.log(data.hasOwnProperty("type"));
+  deleteMessageBroadcast(allUser, data.message)
 });
