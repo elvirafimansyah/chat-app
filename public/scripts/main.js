@@ -74,6 +74,19 @@ formName.addEventListener("submit", (e) => {
     socket.emit('add_user', nameUser, localStorage.getItem("src"));
 
     profileUser()
+  } else{
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Nickname values must be less than 17',
+      confirmButtonColor: '#0d9488',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Try Again!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        inputName.focus()
+      }
+    })
   }
 });
 
@@ -462,18 +475,6 @@ socket.on('add_user', (data) => {
   popUpSounds("notif", "wav")
 });
 
-socket.on("userLeft", (data) => {
-  if(data.name !== undefined ) {
-    if(data.image !== undefined) {
-      userJoinLeftUI(data.name, data.image, false);
-      popUpSounds("notif", "wav")
-    } else {
-      popUpSounds("notif", "wav")
-      userJoinLeftUI(data.name, `${broadcast_profile}`, false)
-    }
-  }
-})
-
 socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
@@ -486,4 +487,16 @@ socket.on("delete message", (data) => {
 let broadcast_profile = "";
 socket.on("add_user", (data) => {
   broadcast_profile = data.image;
+})
+
+socket.on("userLeft", (data) => {
+  if (data.name !== undefined) {
+    if (data.image !== undefined) {
+      userJoinLeftUI(data.name, data.image, false);
+      popUpSounds("notif", "wav")
+    } else {
+      popUpSounds("notif", "wav")
+      userJoinLeftUI(data.name, `${broadcast_profile}`, false)
+    }
+  }
 })
