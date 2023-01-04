@@ -8,7 +8,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let totalUsers = 0;
 let user_nickname = [];
-let users = []
 
 io.on('connection', (socket) => {
   let addedUser = false;
@@ -35,8 +34,8 @@ io.on('connection', (socket) => {
   })
   
   socket.on('message', (data) => {
-    const { name, message, image, hour,  minutes, info_time, id, room_user } = data;
-    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, room_user);
+    const { name, message, image, hour,  minutes, info_time, id, key } = data;
+    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key);
   });
 
   // socket.on("join-room", room => {

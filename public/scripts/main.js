@@ -52,11 +52,17 @@ document.getElementById("profile").addEventListener("change", function () {
   reader.readAsDataURL(this.files[0])
 })
 
+function randomToken() {
+  
+};
+
+
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
   if (inputName.value !== "" & inputName.value.length <= 17  ) {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
+    
     
     nameUser = inputName.value.trim();
     socket.emit('login', nameUser);
@@ -72,7 +78,6 @@ formName.addEventListener("submit", (e) => {
     } 
 
     socket.emit('add_user', nameUser, localStorage.getItem("src"));
-
     profileUser()
   } else{
     Swal.fire({
@@ -207,6 +212,13 @@ function saveProfile() {
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
   let time = new Date();
+  let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let keyLength = 4;
+  let key = ""
+  for (let i = 0; i <= keyLength; i++) {
+    let randomNumber = Math.floor(Math.random() * chars.length);
+    key += chars.substring(randomNumber, randomNumber + 1);
+  }
   if (input.value) {
     let timeStatus = ""
 
@@ -224,6 +236,7 @@ formChat.addEventListener('submit', function (e) {
       minutes: time.getMinutes(),
       info_time: timeStatus,
       id: localStorage.getItem("id"),
+      key: key
     }
 
     socket.emit("message", data)
@@ -242,7 +255,7 @@ formChat.addEventListener('submit', function (e) {
   }
 });
 
-socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
+socket.on("message", (name, message, image, hour, minutes, info_time, id, key) => {
   let broadcast_data = {
     name: name,
     message: message,
@@ -252,6 +265,7 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id) => {
     info_time: info_time,
     id: id,
     type: "broadcast",
+    key: key
   }
 
   // local data broadcast
@@ -295,7 +309,7 @@ function saveAllMessage() {
     let allMessage = document.createElement("li");
     allMessage.classList.add("chat_list");
     allMessage.innerHTML = `
-      <div class="flex justify-between items-center " id="container_message" >
+      <div class="flex justify-between items-center relative" id="container_message" >
         <div class="flex items-center" data-id="${data.id}">
           <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
             <div class="flex items-center ">
@@ -307,7 +321,7 @@ function saveAllMessage() {
             <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p>
           </div> 
         <div>
-        <div class="absolute right-2 flex space-x-2 ">
+        <div class="absolute right-2 -top-4 flex space-x-2 ">
           <button type="button"
             class="p-2.5 text-sm font-medium  bg-white shadow-md rounded-lg border border-slate-200 hover:bg-slate-100 focus:outline-none hidden" title="edit message"
             id="editBtn">
@@ -384,22 +398,24 @@ function saveAllMessage() {
       document.addEventListener('keyup', function (event) {
         const text = messageList.innerText;
         if (event.key === 'Escape') {
-          console.log("press esc")
           messageList.textContent = data.message;
           messageList.setAttribute("contenteditable", "false");
-        } else if (event.key === "Enter") {
-          if(text.length > 3) {
+          console.log("press shif + enter")
+          messageList.textContent += "/n"
+        }  else if (event.key === "Enter") {
+          if (text.length > 3) {
             data.message = text;
             socket.emit('edit message', data);
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
+            data.message.trim();
+            saveAllMessage();
           } else {
-            console.log("kosong")
             messageList.textContent = data.message;
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
           }
-        };
+        }
       });
     });
   })
@@ -514,6 +530,17 @@ function deleteMessageBroadcast(data, message) {
   return data;
 }
 
+function editMessageBroadcast(data, key, name, message) {
+  const objectWithMessageIndex = data.findIndex((obj) => obj.key === key && obj.name === name);
+  const targetObject = allUser[objectWithMessageIndex];
+  targetObject.message = message;
+
+  localStorage.setItem("all_user", JSON.stringify(allUser));
+  saveAllMessage();
+
+  return data;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
@@ -532,10 +559,6 @@ socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
 
-socket.on("delete message", (data) => {
-  deleteMessageBroadcast(allUser, data.message)
-});
-
 let broadcast_profile = "";
 socket.on("add_user", (data) => {
   broadcast_profile = data.image;
@@ -551,17 +574,13 @@ socket.on("userLeft", (data) => {
       userJoinLeftUI(data.name, `${broadcast_profile}`, false)
     }
   }
-})
+});
 
-function editMessageBroadcast(data, message) {
-  const objectWithMessageIndex = data.findIndex((obj) => obj.message === message);
-
-  localStorage.setItem("all_user", JSON.stringify(allUser));
-  saveAllMessage();
-
-  return data;
-}
+socket.on("delete message", (data) => {
+  deleteMessageBroadcast(allUser, data.message)
+});
 
 socket.on("edit message", (data) => {
+  editMessageBroadcast(allUser, data.key, data.name, data.message)
   console.log(data);
 });
