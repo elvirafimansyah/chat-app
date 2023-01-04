@@ -340,7 +340,6 @@ function saveAllMessage() {
                 d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
             </svg>
           </button>
-          
         </div>
       </div>
     `;  
@@ -391,17 +390,22 @@ function saveAllMessage() {
     });
 
     // Edit Message Function
-    editBtn.addEventListener("click", () => {
+    editBtn.addEventListener("click", (event) => {
+      event.stopPropagation()
       messageList.setAttribute("contenteditable", "true");
       messageList.focus()
 
+      messageList.addEventListener('blur', () => {
+        messageList.textContent = data.message;
+        messageList.setAttribute("contenteditable", "false");
+      });
+      
       document.addEventListener('keyup', function (event) {
         const text = messageList.innerText;
         if (event.key === 'Escape') {
           messageList.textContent = data.message;
           messageList.setAttribute("contenteditable", "false");
           console.log("press shif + enter")
-          messageList.textContent += "/n"
         }  else if (event.key === "Enter") {
           if (text.length > 3) {
             data.message = text;
@@ -409,13 +413,14 @@ function saveAllMessage() {
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
             data.message.trim();
-            saveAllMessage();
           } else {
             messageList.textContent = data.message;
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
           }
-        }
+        } else if(event.key === "Alt") {
+          messageList.innerHTML += `<br>`
+        };
       });
     });
   })
