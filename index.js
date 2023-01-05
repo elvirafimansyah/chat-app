@@ -34,8 +34,8 @@ io.on('connection', (socket) => {
   })
   
   socket.on('message', (data) => {
-    const { name, message, image, hour,  minutes, info_time, id, key } = data;
-    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key);
+    const { name, message, image, hour,  minutes, info_time, id, key, edit } = data;
+    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key, edit);
   });
 
   // socket.on("join-room", room => {
@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on("edit message", (data) => {
-    socket.broadcast.emit('edit message',data);
+    socket.broadcast.emit('edit message', data);
   })
 
   socket.on('disconnect', () => {
