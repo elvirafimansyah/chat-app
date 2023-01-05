@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on("edit message", (data) => {
-    socket.broadcast.emit('edit message', data);
+    socket.broadcast.emit('edit message', data );
   })
 
   socket.on('disconnect', () => {

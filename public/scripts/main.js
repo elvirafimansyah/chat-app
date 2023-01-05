@@ -301,7 +301,7 @@ function saveAllMessage() {
     let allMessage = document.createElement("li");
     allMessage.classList.add("chat_list");
     allMessage.innerHTML = `
-      <div class="flex justify-between items-center " id="container_message" >
+      <div class="flex justify-between items-center" id="container_message" >
         <div class="flex items-center" data-id="${data.id}">
           <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
             <div class="flex items-center ">
@@ -313,7 +313,7 @@ function saveAllMessage() {
             <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
           </div> 
         <div>
-        <div class="absolute right-2 -top-4 flex space-x-2 ">
+        <div class="relative sm:-right-2 md:-right-4  -top-4 flex space-x-2 ">
           <button type="button"
             class="p-2.5 text-sm font-medium  bg-white shadow-md rounded-lg border border-slate-200 hover:bg-slate-100 focus:outline-none hidden" title="edit message"
             id="editBtn">
@@ -408,7 +408,7 @@ function saveAllMessage() {
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
             data.message.trim();
-            saveAllMessage()
+            window.location.reload()
           } else {
             messageList.textContent = data.message;
             localStorage.setItem("all_user", JSON.stringify(allUser));
@@ -417,7 +417,6 @@ function saveAllMessage() {
         } 
       });
     });
-
   })
 
   // Search Filter Message Function
@@ -528,14 +527,13 @@ function deleteMessageBroadcast(data, message) {
   return data;
 }
 
-function editMessageBroadcast(data, key, name, message) {
+function editMessageBroadcast(data, key, name, message, edit) {
   const objectWithMessageIndex = data.findIndex((obj) => obj.key === key && obj.name === name);
   const targetObject = allUser[objectWithMessageIndex];
   targetObject.message = message;
-
+  targetObject.edit = edit;
   localStorage.setItem("all_user", JSON.stringify(allUser));
   saveAllMessage();
-
   return data;
 }
 
@@ -579,5 +577,6 @@ socket.on("delete message", (data) => {
 });
 
 socket.on("edit message", (data) => {
-  editMessageBroadcast(allUser, data.key, data.name, data.message)
+  editMessageBroadcast(allUser, data.key, data.name, data.message, data.edit)
+  console.log(data);
 });
