@@ -52,6 +52,17 @@ document.getElementById("profile").addEventListener("change", function () {
   reader.readAsDataURL(this.files[0])
 })
 
+// Upload Image Chat
+let imageUpload = "";
+const uploadBtn = document.getElementById("upload_image");
+uploadBtn.addEventListener("change", function() {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    imageUpload = reader.result;
+  });
+  reader.readAsDataURL(this.files[0])
+});
+
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
   if (inputName.value !== "" & inputName.value.length <= 17  ) {

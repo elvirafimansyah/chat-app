@@ -88,7 +88,7 @@
                 <span class="self-center text-xl font-bold whitespace-nowrap ">Emore Chat</span>
               </a>
               <ul class="mt-4">
-                <div class="flex justify-center  mb-4 w-full">
+                <div class="flex justify-center mb-4 w-full">
                   <div class="relative">
                     <div class="text-gray-800 absolute ml-4 inset-0 m-auto w-4 h-4">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="16" height="16"
@@ -266,18 +266,27 @@
           </div>
           <div class="fixed bottom-0 w-full bg-gray-50">
             <form  id="form_chat" class="w-full relative border-t border-slate-200">
+              <div class="sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem] flex  flex-wrap w-4/5  p-2 ">
+                <div class="bg-white rounded-lg m-2 p-2 ">
+                  <img src="assets/chat.png" class="w-56" alt="">
+                  <button class="bg-white border shadow-lg p-2 rounded-lg relative -top-[96%] left-[96%] "><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-x-lg"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                  </svg></button>
+                </div>
+              </div>
               <label for="chat" class="sr-only">Your message</label>
               <div class="flex items-center px-3 py-2 rounded-lg sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem]" >
-                <button type="button"
-                  class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 ">
-                  <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
+                <label for="upload_image"
+                  class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-teal-600 hover:bg-gray-100">
+                  <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd"
-                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                      clip-rule="evenodd"></path>
+                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd">
+                    </path>
                   </svg>
-                  <span class="sr-only">Upload image</span>
-                </button>
+                </label>
+                <input id="upload_image" type="file" accept="image/*" class="hidden">
                 <input id="chat"  
                   class="block mx-4 p-2.5 w-full sm:w-5/12 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg  focus:ring-teal-500 focus:border-teal-500 focus:outline-none border border-slate-200 "
                   placeholder="Your message..." required>
