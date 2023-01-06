@@ -408,7 +408,7 @@ function saveAllMessage() {
             localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
             data.message.trim();
-            window.location.reload()
+            window.location.reload();
           } else {
             messageList.textContent = data.message;
             localStorage.setItem("all_user", JSON.stringify(allUser));
