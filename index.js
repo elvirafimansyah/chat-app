@@ -34,9 +34,14 @@ io.on('connection', (socket) => {
   })
   
   socket.on('message', (data) => {
-    const { name, message, image, hour,  minutes, info_time, id, key, edit } = data;
-    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key, edit);
+    const { name, message, image, hour,  minutes, info_time, id, key, edit, upload } = data;
+    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key, edit, upload);
   });
+
+  // socket.on("message image", (data) => {
+  //   const { name, profil, image, hour, minutes, info_time, id, key } = data;
+  //   socket.broadcast.emit("message image", name, message, image, hour, minutes, info_time, id, key)
+  // });
 
   // socket.on("join-room", room => {
   //   socket.join(room);

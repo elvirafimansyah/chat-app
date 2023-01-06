@@ -55,13 +55,41 @@ document.getElementById("profile").addEventListener("change", function () {
 // Upload Image Chat
 let imageUpload = "";
 const uploadBtn = document.getElementById("upload_image");
+const fileWrapper = document.getElementById("file_wrapper");
 uploadBtn.addEventListener("change", function() {
+  fileWrapper.innerHTML = "";
   const reader = new FileReader();
   reader.addEventListener("load", () => {
+    fileWrapper.classList.remove("hidden");
     imageUpload = reader.result;
+    const nameFile = this.files[0].name;
+    if(imageUpload.length > 0) {
+      const fileEl = document.createElement("div");
+      fileEl.classList.add("bg-white", "rounded-lg", "m-2", "p-2", "w-3/4");
+      fileEl.innerHTML = `
+        <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16" id="close_btn"><svg
+          xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg"
+          viewBox="0 0 16 16">
+          <path
+            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+        </svg></button>
+        <img src="${imageUpload}" class="w-60" alt="">
+        <p>${nameFile}<p>
+      `
+
+      // Close Btn
+      const closeBtn = fileEl.querySelector("#close_btn");
+      closeBtn.addEventListener("click", () => {
+        fileWrapper.classList.add("hidden")
+      });
+
+      fileWrapper.appendChild(fileEl)
+    } 
   });
   reader.readAsDataURL(this.files[0])
+  
 });
+
 
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
@@ -214,7 +242,9 @@ function saveProfile() {
 
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
+  console.log("submit")
   let time = new Date();
+  // Random Key
   let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let keyLength = 4;
   let key = ""
@@ -222,43 +252,49 @@ formChat.addEventListener('submit', function (e) {
     let randomNumber = Math.floor(Math.random() * chars.length);
     key += chars.substring(randomNumber, randomNumber + 1);
   }
-  if (input.value) {
-    let timeStatus = ""
 
-    if (time.getHours() > 12) {
-      timeStatus = "PM"
-    } else {
-      timeStatus = "AM"
-    }
+  let timeStatus = ""
 
-    let data = {
-      name: localStorage.getItem("name"),
-      message: input.value,
-      image: localStorage.getItem("src"),
-      hour: time.getHours(),
-      minutes: time.getMinutes(),
-      info_time: timeStatus,
-      id: localStorage.getItem("id"),
-      key: key,
-      edit: false
-    }
-
-    socket.emit("message", data)
-    // local data
-    saveUser.push(data);
-    localStorage.setItem("data_user", JSON.stringify(saveUser));
-
-    // global data
-    allUser.push(data)
-    localStorage.setItem("all_user", JSON.stringify(allUser))
-    
-    saveAllMessage();
-    window.scrollTo(0, document.body.scrollHeight);
-    input.value = '';
+  if (time.getHours() > 12) {
+    timeStatus = "PM"
+  } else {
+    timeStatus = "AM"
   }
+
+  let data = {
+    name: localStorage.getItem("name"),
+    message: input.value.trim(),
+    image: localStorage.getItem("src"),
+    hour: time.getHours(),
+    minutes: time.getMinutes(),
+    info_time: timeStatus,
+    id: localStorage.getItem("id"),
+    key: key,
+    edit: false,
+    upload: imageUpload
+  }
+
+  socket.emit("message", data)
+  // local data
+  saveUser.push(data);
+  localStorage.setItem("data_user", JSON.stringify(saveUser));
+  
+  console.log(allUser)
+  // global data
+  allUser.push(data)
+  localStorage.setItem("all_user", JSON.stringify(allUser))
+  saveAllMessage();
+
+  if(!fileWrapper.classList.contains("hidden")) {
+    fileWrapper.classList.add("hidden");
+  }
+
+  window.scrollTo(0, document.body.scrollHeight);
+  input.value = '';
+  imageUpload = "";
 });
 
-socket.on("message", (name, message, image, hour, minutes, info_time, id, key, edit) => {
+socket.on("message", (name, message, image, hour, minutes, info_time, id, key, edit, upload) => {
   let broadcast_data = {
     name: name,
     message: message,
@@ -269,7 +305,8 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, key, e
     id: id,
     type: "broadcast",
     key: key,
-    edit: edit
+    edit: edit,
+    upload: upload
   }
 
   // local data broadcast
@@ -308,126 +345,135 @@ socket.on("private message", (name, message, image, hour, minutes, info_time, id
 
 function saveAllMessage() {
   messageUser.innerHTML = ""
+  allUser = allUser.filter(obj => {
+    return obj.message.length > 0 || obj.upload.length > 0
+  });
+
+  localStorage.setItem("all_user", JSON.stringify(allUser));
+
   allUser.forEach(data => {
-    let allMessage = document.createElement("li");
-    allMessage.classList.add("chat_list");
-    allMessage.innerHTML = `
-      <div class="flex justify-between items-center" id="container_message" >
-        <div class="flex items-center" data-id="${data.id}">
-          <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-            <div class="flex items-center ">
-              <p class="text-lg font-medium">${data.name}</p>&nbsp;
-              <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-              &nbsp;
-              <span>${data.info_time}</span>
-            </div>
-            <p class="bg-slate-200 rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
-          </div> 
-        <div>
-        <div class="relative sm:-right-2 md:-right-4  -top-4 flex space-x-2 ">
-          <button type="button"
-            class="p-2.5 text-sm font-medium  bg-white shadow-md rounded-lg border border-slate-200 hover:bg-slate-100 focus:outline-none hidden" title="edit message"
-            id="editBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-              <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
-            </svg>
-          </button>
-          <button type="button"
-            class="p-2.5 text-sm font-medium text-white bg-red-500 rounded-lg border border-red-600 hover:bg-red-700 focus:outline-none hidden " title="delete message"
-            id="deleteBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
-              viewBox="0 0 16 16">
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-              <path fill-rule="evenodd"
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-            </svg>
-          </button>
+    if(data.message.length > 0 || data.upload.length > 0) {
+      let allMessage = document.createElement("li");
+      allMessage.classList.add("chat_list");
+      allMessage.innerHTML = `
+        <div class="flex justify-between items-center " id="container_message" >
+          <div class="flex items-center" data-id="${data.id}">
+            <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+              <div class="flex items-center ">
+                <p class="text-lg font-medium">${data.name}</p>&nbsp;
+                <span class="text-gray-900">${data.hour}:${data.minutes}</span>
+                &nbsp;
+                <span>${data.info_time}</span>
+              </div>
+              ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
+              <p class="bg-slate-200 ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
+            </div> 
+          <div>
+          <div class="relative sm:-right-2 md:-right-4  -top-4 flex space-x-2 ">
+            <button type="button"
+              class="p-2.5 text-sm font-medium  bg-white shadow-md rounded-lg border border-slate-200 hover:bg-slate-100 focus:outline-none hidden" title="edit message"
+              id="editBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+              </svg>
+            </button>
+            <button type="button"
+              class="p-2.5 text-sm font-medium text-white bg-red-500 rounded-lg border border-red-600 hover:bg-red-700 focus:outline-none hidden " title="delete message"
+              id="deleteBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                <path fill-rule="evenodd"
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
-    `;  
-
-    messageUser.appendChild(allMessage);
-
-    const containerMessage = allMessage.querySelector("#container_message");
-    const deleteBtn = allMessage.querySelector("#deleteBtn");
-    const editBtn = allMessage.querySelector("#editBtn");
-    const messageList = allMessage.querySelector("#message");
-
-    messageList.contentEditable = false;
-
-    containerMessage.addEventListener("mouseover",  () => {
-      if(data.name === localStorage.getItem("name")) {
-        deleteBtn.classList.remove("hidden");
-        editBtn.classList.remove("hidden")
-      } 
-    })
-
-    containerMessage.addEventListener("mouseout", () => {
-      deleteBtn.classList.add("hidden");
-      editBtn.classList.add("hidden");
-    })
-
-    // Delete Message Function
-    deleteBtn.addEventListener("click", (index) => {
-      Swal.fire({
-        title: 'Are you sure ?',
-        text: "You won't be able to revert this message!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#0d9488',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete message',
-        iconColor: "#14b8a6"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          allUser = allUser.filter(e => {
-            if (e != data) {
-              return index
-            }
-            socket.emit("delete message", e)
-          })
-          localStorage.setItem("all_user", JSON.stringify(allUser))
-          saveAllMessage()
-        }
+      `;  
+  
+      messageUser.appendChild(allMessage);
+  
+      const containerMessage = allMessage.querySelector("#container_message");
+      const deleteBtn = allMessage.querySelector("#deleteBtn");
+      const editBtn = allMessage.querySelector("#editBtn");
+      const messageList = allMessage.querySelector("#message");
+  
+      messageList.contentEditable = false;
+  
+      containerMessage.addEventListener("mouseover",  () => {
+        if(data.name === localStorage.getItem("name")) {
+          deleteBtn.classList.remove("hidden");
+          editBtn.classList.remove("hidden")
+        } 
       })
-    });
-
-    // Edit Message Function
-    editBtn.addEventListener("click", (event) => {
-      event.stopPropagation()
-      messageList.setAttribute("contenteditable", "true");
-      messageList.focus()
-
-      messageList.addEventListener('blur', () => {
-        messageList.textContent = data.message;
-        messageList.setAttribute("contenteditable", "false");
-        data.edit = false;
+  
+      containerMessage.addEventListener("mouseout", () => {
+        deleteBtn.classList.add("hidden");
+        editBtn.classList.add("hidden");
+      })
+  
+      // Delete Message Function
+      deleteBtn.addEventListener("click", (index) => {
+        Swal.fire({
+          title: 'Are you sure ?',
+          text: "You won't be able to revert this message!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#0d9488',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete message',
+          iconColor: "#14b8a6"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            allUser = allUser.filter(e => {
+              if (e != data) {
+                return index
+              }
+              socket.emit("delete message", e)
+            })
+            localStorage.setItem("all_user", JSON.stringify(allUser))
+            saveAllMessage()
+          }
+        })
       });
-
-      document.addEventListener('keyup', function (event) {
-        const text = messageList.innerText;
-        if (event.key === 'Escape') {
+  
+      // Edit Message Function
+      editBtn.addEventListener("click", (event) => {
+        event.stopPropagation()
+        messageList.setAttribute("contenteditable", "true");
+        messageList.focus()
+  
+        messageList.addEventListener('blur', () => {
           messageList.textContent = data.message;
           messageList.setAttribute("contenteditable", "false");
           data.edit = false;
-        }  else if (event.key === "Enter") {
-          if (text.length > 3) {
-            data.message = text;
-            data.edit = true;
-            socket.emit('edit message', data);
-            localStorage.setItem("all_user", JSON.stringify(allUser));
-            messageList.setAttribute("contenteditable", "false");
-            data.message.trim();
-            window.location.reload();
-          } else {
+        });
+  
+        document.addEventListener('keyup', function (event) {
+          const text = messageList.innerText;
+          if (event.key === 'Escape') {
             messageList.textContent = data.message;
-            localStorage.setItem("all_user", JSON.stringify(allUser));
             messageList.setAttribute("contenteditable", "false");
-          }
-        } 
+            data.edit = false;
+          }  else if (event.key === "Enter") {
+            if (text.length > 3) {
+              data.message = text;
+              data.edit = true;
+              socket.emit('edit message', data);
+              localStorage.setItem("all_user", JSON.stringify(allUser));
+              messageList.setAttribute("contenteditable", "false");
+              data.message.trim();
+              window.location.reload();
+            } else {
+              messageList.textContent = data.message;
+              localStorage.setItem("all_user", JSON.stringify(allUser));
+              messageList.setAttribute("contenteditable", "false");
+            }
+          } 
+        });
       });
-    });
+    }
   })
 
   // Search Filter Message Function
@@ -610,3 +656,4 @@ socket.on("edit message", (data) => {
   editMessageBroadcast(allUser, data.key, data.name, data.message, data.edit)
   console.log(data);
 });
+

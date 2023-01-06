@@ -266,15 +266,7 @@
           </div>
           <div class="fixed bottom-0 w-full bg-gray-50">
             <form  id="form_chat" class="w-full relative border-t border-slate-200">
-              <div class="sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem] flex  flex-wrap w-4/5  p-2 ">
-                <div class="bg-white rounded-lg m-2 p-2 ">
-                  <img src="assets/chat.png" class="w-56" alt="">
-                  <button class="bg-white border shadow-lg p-2 rounded-lg relative -top-[96%] left-[96%] "><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-x-lg"
-                    viewBox="0 0 16 16">
-                    <path
-                      d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                  </svg></button>
-                </div>
+              <div class="sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem] flex  flex-wrap w-4/5" id="file_wrapper">
               </div>
               <label for="chat" class="sr-only">Your message</label>
               <div class="flex items-center px-3 py-2 rounded-lg sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem]" >
@@ -289,7 +281,7 @@
                 <input id="upload_image" type="file" accept="image/*" class="hidden">
                 <input id="chat"  
                   class="block mx-4 p-2.5 w-full sm:w-5/12 md:w-1/2 lg:w-2/3  break-all text-sm text-gray-900 bg-white rounded-lg  focus:ring-teal-500 focus:border-teal-500 focus:outline-none border border-slate-200 "
-                  placeholder="Your message..." required>
+                  placeholder="Your message..." >
                 <button type="submit"
                   class="inline-flex justify-center p-2   text-teal-600 rounded-full cursor-pointer hover:bg-teal-50">
                   <svg aria-hidden="true" class="w-6 h-6 rotate-90" fill="currentColor" viewBox="0 0 20 20"
