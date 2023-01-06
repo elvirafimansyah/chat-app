@@ -63,7 +63,6 @@ uploadBtn.addEventListener("change", function() {
     fileWrapper.classList.remove("hidden");
     imageUpload = reader.result;
     const nameFile = this.files[0].name;
-    if(imageUpload.length > 0) {
       const fileEl = document.createElement("div");
       fileEl.classList.add("bg-white", "rounded-lg", "m-2", "p-2", "w-3/4");
       fileEl.innerHTML = `
@@ -77,17 +76,16 @@ uploadBtn.addEventListener("change", function() {
         <p>${nameFile}<p>
       `
 
-      // Close Btn
+      // Close Btn Function
       const closeBtn = fileEl.querySelector("#close_btn");
       closeBtn.addEventListener("click", () => {
         fileWrapper.classList.add("hidden")
       });
 
       fileWrapper.appendChild(fileEl)
-    } 
   });
+
   reader.readAsDataURL(this.files[0])
-  
 });
 
 
@@ -419,13 +417,24 @@ function saveAllMessage() {
           title: 'Are you sure ?',
           text: "You won't be able to revert this message!",
           icon: 'warning',
+          showDenyButton: true,
           showCancelButton: true,
           confirmButtonColor: '#0d9488',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete message',
-          iconColor: "#14b8a6"
+          denyButtonColor: "#0d9488",
+          denyButtonText: `Delete For Everyone`,
+          confirmButtonText: 'Delete For Me',
+          iconColor: "#14b8a6",
         }).then((result) => {
           if (result.isConfirmed) {
+            allUser = allUser.filter(e => {
+              if (e != data) {
+                return index
+              }
+            })
+            localStorage.setItem("all_user", JSON.stringify(allUser))
+            saveAllMessage()
+          } else if(result.isDenied) {
             allUser = allUser.filter(e => {
               if (e != data) {
                 return index
