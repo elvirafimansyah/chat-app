@@ -2,7 +2,6 @@ var socket = io();
 var formChat = document.getElementById('form_chat');
 var input = document.getElementById('chat');
 var messageUser = document.getElementById("messages");
-const status = document.querySelector(".status");
 const inputName = document.querySelector("#input-name");
 const formName = document.getElementById("form_name");
 const profileUserContainer = document.getElementById("profile_user");
@@ -12,6 +11,7 @@ const alertCopy = document.getElementById("toast-success");
 const inputRoom = document.getElementById("rooms");
 const displayRoom = document.querySelector(".display_room");
 const containerCopy = document.getElementById("containerCopy");
+const clearChatBtn = document.getElementById("clear_message")
 
 let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
 let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
@@ -537,6 +537,26 @@ function editMessageBroadcast(data, key, name, message, edit) {
   return data;
 }
 
+clearChatBtn.addEventListener("click", () => {
+  if(allUser.length > 0) {
+    Swal.fire({
+      title: 'Delete All these messages ?',
+      text: "You won't be able to revert these messages!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#0d9488',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete all messages',
+      iconColor: "#14b8a6"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("all_user");
+        window.location.reload()
+      }
+    })
+  }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
   if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
@@ -545,7 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
   } 
 })
 
-const contJoinUser = document.querySelector(".status_user");
 socket.on('add_user', (data) => {
   userJoinLeftUI(data.name, data.image, true);
   popUpSounds("notif", "wav")

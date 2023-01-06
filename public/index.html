@@ -227,27 +227,20 @@
                       class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-teal-500 focus:border-teal-500"
                       placeholder="Search...">
                   </div>
-                  <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots"
+                  <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots" data-dropdown-placement="bottom-start"
                     class="hidden sm:inline-flex items-center p-2 text-sm font-medium text-center text-gray-900  rounded-lg focus:outline-none "
                     type="button">
-                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-6 h-6" aria-hidden="true" fill="#5E6E77" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
                     </svg>
                   </button>
-                  
-                  <!-- Dropdown menu -->
                   <div id="dropdownDots"
-                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconButton">
+                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded shadow w-44 ">
+                    <ul class="py-1 text-sm text-gray-700 " aria-labelledby="dropdownMenuIconButton">
                       <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 flex items-center" id="clear_message">Clear Messages</a>
                       </li>
                     </ul>
-                    <div class="py-1">
-                      <a href="#"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Separated
-                        link</a>
-                    </div>
                   </div>
                 </div>
                 <div class="items-center justify-between hidden w-full sm:flex sm:w-auto sm:order-1" id="navbar-search">
@@ -268,7 +261,6 @@
               </div>
             </nav>
             <div class="sm:pt-12 pb-20">
-              <p class="status_user"></p>
               <ul id="messages" class="list-none "></ul>
             </div>
           </div>
@@ -306,7 +298,6 @@
       </div>
     </div>
     <!-- Alert User Notification -->
-    <!-- End Alert User Notification -->
   </section>
   <!-- alert copy -->
   <div id="containerCopy" class="hidden"></div>
