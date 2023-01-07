@@ -13,8 +13,6 @@ const displayRoom = document.querySelector(".display_room");
 const containerCopy = document.getElementById("containerCopy");
 const clearChatBtn = document.getElementById("clear_message")
 
-let saveUser = JSON.parse(localStorage.getItem("data_user")) || [];
-let saveUserBroadcast = JSON.parse(localStorage.getItem("user_broadcast")) || [];
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
 let roomUser = "";
@@ -64,24 +62,32 @@ uploadBtn.addEventListener("change", function() {
     imageUpload = reader.result;
     const nameFile = this.files[0].name;
       const fileEl = document.createElement("div");
+      const infoAlert = document.createElement("div");
       fileEl.classList.add("bg-white", "rounded-lg", "m-2", "p-2", "w-3/4");
       fileEl.innerHTML = `
-        <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16" id="close_btn"><svg
+        <div>
+          <img src="${imageUpload}" class="w-60" alt="${nameFile}">
+          <p>${nameFile}<p>
+        </div>
+      `
+      infoAlert.innerHTML = `
+        <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16 pt-5" id="close_btn"><svg
           xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg"
           viewBox="0 0 16 16">
           <path
             d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
         </svg></button>
-        <img src="${imageUpload}" class="w-60" alt="">
-        <p>${nameFile}<p>
+        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg " role="alert">
+          <span class="font-medium">Danger alert!</span> Change a few things up and try submitting again.
+        </div>
       `
 
       // Close Btn Function
-      const closeBtn = fileEl.querySelector("#close_btn");
+      const closeBtn = infoAlert.querySelector("#close_btn");
       closeBtn.addEventListener("click", () => {
         fileWrapper.classList.add("hidden")
       });
-
+      fileWrapper.appendChild(infoAlert)
       fileWrapper.appendChild(fileEl)
   });
 
@@ -273,15 +279,24 @@ formChat.addEventListener('submit', function (e) {
   }
 
   socket.emit("message", data)
-  // local data
-  saveUser.push(data);
-  localStorage.setItem("data_user", JSON.stringify(saveUser));
-  
-  console.log(allUser)
   // global data
   allUser.push(data)
-  localStorage.setItem("all_user", JSON.stringify(allUser))
-  saveAllMessage();
+  try {
+    localStorage.setItem("all_user", JSON.stringify(allUser))
+    saveAllMessage();
+  } catch(e) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Sorry, your maximum image length has been reached. Please remove any previous images.',
+      confirmButtonColor: '#0d9488',
+      confirmButtonText: 'Try Again!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.reload()
+      }
+    })
+  }
 
   if(!fileWrapper.classList.contains("hidden")) {
     fileWrapper.classList.add("hidden");
@@ -307,10 +322,6 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, key, e
     upload: upload
   }
 
-  // local data broadcast
-  saveUserBroadcast.push(broadcast_data);
-  localStorage.setItem("user_broadcast", JSON.stringify(saveUserBroadcast));
-  
   // global data
   allUser.push(broadcast_data);
   localStorage.setItem("all_user", JSON.stringify(allUser))
@@ -625,7 +636,7 @@ clearChatBtn.addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
-  if(localStorage.getItem("data_user") || localStorage.getItem("user_broadcast")) {
+  if(localStorage.getItem("all_user") ) {
     saveAllMessage()
     window.scrollTo(0, document.body.scrollHeight);
   } 
