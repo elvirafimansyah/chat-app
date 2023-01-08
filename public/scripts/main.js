@@ -11,7 +11,8 @@ const alertCopy = document.getElementById("toast-success");
 const inputRoom = document.getElementById("rooms");
 const displayRoom = document.querySelector(".display_room");
 const containerCopy = document.getElementById("containerCopy");
-const clearChatBtn = document.getElementById("clear_message")
+const clearChatBtn = document.querySelectorAll("#clear_message")
+
 
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
@@ -285,23 +286,25 @@ formChat.addEventListener('submit', function (e) {
     localStorage.setItem("all_user", JSON.stringify(allUser))
     saveAllMessage();
   } catch(e) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Sorry, your maximum localstorage length has been reached. Please delete any previous images or clear all your message.',
-      showDenyButton: true,
-      showCancelButton: true,
-      denyButtonText: `Clear All Message`,
-      confirmButtonColor: '#0d9488',
-      confirmButtonText: 'Try Again!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload()
-      } else if (result.isDenied) {
-        localStorage.removeItem("all_user");
-        window.location.reload()
-      };
-    }) 
+    if(e) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Sorry, your maximum localstorage length has been reached. Please delete any previous images or clear all your message.',
+        showDenyButton: true,
+        showCancelButton: true,
+        denyButtonText: `Clear All Message`,
+        confirmButtonColor: '#0d9488',
+        confirmButtonText: 'Try Again!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload()
+        } else if (result.isDenied) {
+          localStorage.removeItem("all_user");
+          window.location.reload()
+        };
+      }) 
+    }
   }
 
   if(!fileWrapper.classList.contains("hidden")) {
@@ -371,9 +374,11 @@ function saveAllMessage() {
       let allMessage = document.createElement("li");
       allMessage.classList.add("chat_list");
       allMessage.innerHTML = `
+        <a href="http://youtube.com">Youtube</a>
         <div class="flex justify-between items-center " id="container_message" >
           <div class="flex items-center" data-id="${data.id}">
-            <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
+            <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> 
+            <div>
               <div class="flex items-center ">
                 <p class="text-lg font-medium">${data.name}</p>&nbsp;
                 <span class="text-gray-900">${data.hour}:${data.minutes}</span>
@@ -427,7 +432,23 @@ function saveAllMessage() {
         deleteBtn.classList.add("hidden");
         editBtn.classList.add("hidden");
       })
-  
+      
+      // Details Image
+      const imageList = allMessage.querySelector(".image_list");
+      if(imageList !== null) {
+        imageList.addEventListener("click", () => {
+          const windowsUser = window.navigator.userAgent.toLowerCase().includes("windows");
+          const ipaduser = window.navigator.userAgent.toLowerCase().includes("ipad");
+          const iphoneUser = window.navigator.userAgent.toLowerCase().includes("iphone");
+          const androidUser = window.navigator.userAgent.toLowerCase().includes("android")
+          Swal.fire({
+            imageUrl: imageList.src,
+            imageAlt: imageList.alt,
+            showConfirmButton: false,
+          })
+        });
+      }
+
       // Delete Message Function
       deleteBtn.addEventListener("click", (index) => {
         Swal.fire({
@@ -620,25 +641,27 @@ function editMessageBroadcast(data, key, name, message, edit) {
   return data;
 }
 
-clearChatBtn.addEventListener("click", () => {
-  if(allUser.length > 0) {
-    Swal.fire({
-      title: 'Delete All these messages ?',
-      text: "You won't be able to revert these messages!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#0d9488',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete all messages',
-      iconColor: "#14b8a6"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("all_user");
-        window.location.reload()
-      }
-    })
-  }
-});
+clearChatBtn.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if(allUser.length > 0) {
+      Swal.fire({
+        title: 'Delete All these messages ?',
+        text: "You won't be able to revert these messages!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#0d9488',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete all messages',
+        iconColor: "#14b8a6"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("all_user");
+          window.location.reload()
+        }
+      })
+    }
+  });
+})
 
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
@@ -683,3 +706,9 @@ socket.on("edit message", (data) => {
   console.log(data);
 });
 
+
+console.log(window.navigator.userAgent.toLowerCase());
+console.log('windows: ',window.navigator.userAgent.toLowerCase().includes("windows")) // pc windows
+console.log('ipad', window.navigator.userAgent.toLowerCase().includes("ipad")) // ipad
+console.log('iphone', window.navigator.userAgent.toLowerCase().includes("iphone")) // iphone
+console.log('android', window.navigator.userAgent.toLowerCase().includes("android")) // andorid
