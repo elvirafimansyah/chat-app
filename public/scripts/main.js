@@ -13,7 +13,6 @@ const displayRoom = document.querySelector(".display_room");
 const containerCopy = document.getElementById("containerCopy");
 const clearChatBtn = document.querySelectorAll("#clear_message")
 
-
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
 let roomUser = "";
@@ -39,6 +38,12 @@ let randomPictureArray = [
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqr.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/rabc.svg?b=%2314baa6"
 ]
+// Device
+const windowSize  = window.matchMedia("screen and (min-width: 929px)")
+const windowsUser = window.navigator.userAgent.toLowerCase().includes("windows");
+const ipaduser = window.navigator.userAgent.toLowerCase().includes("ipad");
+const iphoneUser = window.navigator.userAgent.toLowerCase().includes("iphone");
+const androidUser = window.navigator.userAgent.toLowerCase().includes("android")
 
 // Preview Profile Picture 
 const preview = document.getElementById("preview-profile");
@@ -59,41 +64,51 @@ uploadBtn.addEventListener("change", function() {
   fileWrapper.innerHTML = "";
   const reader = new FileReader();
   reader.addEventListener("load", () => {
-    fileWrapper.classList.remove("hidden");
+    fileWrapper.style.display = "block";
     imageUpload = reader.result;
     const nameFile = this.files[0].name;
-      const fileEl = document.createElement("div");
-      const infoAlert = document.createElement("div");
-      fileEl.classList.add("bg-white", "rounded-lg", "m-2", "p-2", "w-3/4");
-      fileEl.innerHTML = `
-        <div>
-          <img src="${imageUpload}" class="w-60" alt="${nameFile}">
-          <p>${nameFile}<p>
-        </div>
-      `
-      infoAlert.innerHTML = `
-        <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16 pt-5" id="close_btn"><svg
-          xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg"
-          viewBox="0 0 16 16">
-          <path
-            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-        </svg></button>
-        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg " role="alert">
-          <span class="font-medium">Danger alert!</span> Change a few things up and try submitting again.
-        </div>
-      `
-
-      // Close Btn Function
-      const closeBtn = infoAlert.querySelector("#close_btn");
-      closeBtn.addEventListener("click", () => {
-        fileWrapper.classList.add("hidden")
-      });
+    const fileEl = document.createElement("div");
+    const infoAlert = document.createElement("div");
+    infoAlert.classList.add("sm:w-1/2","md:w-3/12", "lg:w-2/5")
+    fileEl.classList.add("bg-white", "rounded-lg", "m-2", "p-2", "w-3/4", "flex", "justify-center", "items-center", "text-center", "md:w-1/2");
+    fileEl.innerHTML = `
+    <div>
+      <img src="${imageUpload}" class="w-60" alt="${nameFile}">
+      <p class="font-medium">${nameFile}<p>
+    </div>
+    `
+    infoAlert.innerHTML = `
+    <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16  top-5 " id="close_btn"><svg
+      xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg"
+      viewBox="0 0 16 16">
+      <path
+        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+    </svg></button>
+    <div class="p-4 text-sm text-teal-700 bg-teal-100 rounded-lg  ml-2 lg:mt-10 " role="alert">
+      <span class="font-medium">Note: Don't upload a lot of image files There is a maximum image size that can be uploaded.
+    </div>
+    `
+    
+    if(windowSize.matches) {
+      fileWrapper.appendChild(fileEl)
+      fileWrapper.appendChild(infoAlert)
+    } else {
+      console.log("ini di mobile")
       fileWrapper.appendChild(infoAlert)
       fileWrapper.appendChild(fileEl)
+    }
+    // Close Btn Function
+    const closeBtn = fileWrapper.querySelector("#close_btn");
+    closeBtn.addEventListener("click", () => {
+      fileWrapper.style.display = "none"
+    });
+
   });
 
   reader.readAsDataURL(this.files[0])
 });
+
+
 
 
 formName.addEventListener("submit", (e) => {
@@ -307,9 +322,7 @@ formChat.addEventListener('submit', function (e) {
     }
   }
 
-  if(!fileWrapper.classList.contains("hidden")) {
-    fileWrapper.classList.add("hidden");
-  }
+  fileWrapper.style.display = "none"
 
   window.scrollTo(0, document.body.scrollHeight);
   input.value = '';
@@ -437,10 +450,7 @@ function saveAllMessage() {
       const imageList = allMessage.querySelector(".image_list");
       if(imageList !== null) {
         imageList.addEventListener("click", () => {
-          const windowsUser = window.navigator.userAgent.toLowerCase().includes("windows");
-          const ipaduser = window.navigator.userAgent.toLowerCase().includes("ipad");
-          const iphoneUser = window.navigator.userAgent.toLowerCase().includes("iphone");
-          const androidUser = window.navigator.userAgent.toLowerCase().includes("android")
+          
           Swal.fire({
             imageUrl: imageList.src,
             imageAlt: imageList.alt,
