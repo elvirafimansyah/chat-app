@@ -288,14 +288,20 @@ formChat.addEventListener('submit', function (e) {
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
-      text: 'Sorry, your maximum image length has been reached. Please remove any previous images.',
+      text: 'Sorry, your maximum localstorage length has been reached. Please delete any previous images or clear all your message.',
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `Clear All Message`,
       confirmButtonColor: '#0d9488',
       confirmButtonText: 'Try Again!'
     }).then((result) => {
       if (result.isConfirmed) {
         window.location.reload()
-      }
-    })
+      } else if (result.isDenied) {
+        localStorage.removeItem("all_user");
+        window.location.reload()
+      };
+    }) 
   }
 
   if(!fileWrapper.classList.contains("hidden")) {
