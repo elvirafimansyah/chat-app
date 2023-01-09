@@ -293,7 +293,7 @@ formChat.addEventListener('submit', function (e) {
       return text.includes('http')
     }) 
 
-    filterHttp = `<a href="${filterHttp}" class="underline text-sky-500">${filterHttp}</a>`;
+    filterHttp = `<a href="${filterHttp}" class="underline text-sky-500 font-medium">${filterHttp}</a>`;
     arrValue[index] = filterHttp;
 
     input.value = arrValue.join(' ');
@@ -311,25 +311,6 @@ formChat.addEventListener('submit', function (e) {
     edit: false,
     upload: imageUpload
   }
-
-  // if(data.message.includes("https:")) {
-  //   const text = data.message;
-  //   const wordDetails = text.split(" ");
-  //   const filterHttp = wordDetails.filter((arr) => {
-  //     return arr.includes("https:")
-  //   });
-  //   const anotherHttp = wordDetails.filter((arr) => {
-  //     return !arr.includes("https:")
-  //   })
-
-  //   const linkEl = document.createElement("a");
-  //   linkEl.href = filterHttp;
-  //   linkEl.textContent = filterHttp;
-  //   linkEl.classList.add("underline", "text-sky-500", "font-medium");
-  //   data.message = linkEl
-  //   localStorage.setItem("all_user", JSON.stringify(allUser))
-  // }
-
 
   socket.emit("message", data)
   // global data
@@ -438,7 +419,7 @@ function saveAllMessage() {
 
               ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
 
-              <p class="bg-slate-200 ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> 
+              <p class="${data.type !== undefined ? "bg-transparent border border-gray-300 " : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> 
               <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
             </div> 
           <div>
