@@ -39,6 +39,7 @@ let randomPictureArray = [
   "https://avatars.dicebear.com/api/bottts/rabc.svg?b=%2314baa6"
 ]
 // Device
+console.log(window.navigator.userAgent.toLowerCase())
 const windowSize  = window.matchMedia("screen and (min-width: 929px)")
 const windowsUser = window.navigator.userAgent.toLowerCase().includes("windows");
 const ipaduser = window.navigator.userAgent.toLowerCase().includes("ipad");
@@ -348,8 +349,6 @@ formChat.addEventListener('submit', function (e) {
     }
   }
 
- 
-
   window.scrollTo(0, document.body.scrollHeight);
   input.value = '';
   imageUpload = "";
@@ -580,45 +579,6 @@ function saveAllMessage() {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-function privateMessage(data) {
-  messageUser.innerHTML = "";
-  const privateList = document.createElement("li"); 
-  privateList.innerHTML = `
-    <div class="flex items-center" data-id="${data.id}">
-      <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-        <div class="flex items-center ">
-          <p class="text-lg font-medium">${data.name}</p>&nbsp;
-          <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-          &nbsp;
-          <span>${data.info_time}</span>
-        </div>
-        <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-      </div>
-    <div>
-  `
-
-  messageUser.appendChild(privateList);
-}
-
-function broadcastMessage(data) {
-  messageUser.innerHTML = "";
-  const broadcastList = document.createElement("li");
-  broadcastList.innerHTML = `
-    <div class="flex items-center" data-id="${data.id}">
-      <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-        <div class="flex items-center ">
-          <p class="text-lg font-medium">${data.name}</p>&nbsp;
-          <span class="text-gray-900">${data.hour}:${data.minutes}</span>
-          &nbsp;
-          <span>${data.info_time}</span>
-        </div>
-        <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${data.message}</p>
-      </div>
-    <div>
-  `
-  messageUser.appendChild(broadcastList);
-}
-
 function popUpSounds(song, type) {
   const audio = new Audio(`./sounds/${song}.${type}`);
   audio.play()
@@ -743,10 +703,3 @@ socket.on("edit message", (data) => {
   editMessageBroadcast(allUser, data.key, data.name, data.message, data.edit)
   console.log(data);
 });
-
-
-console.log(window.navigator.userAgent.toLowerCase());
-console.log('windows: ',window.navigator.userAgent.toLowerCase().includes("windows")) // pc windows
-console.log('ipad', window.navigator.userAgent.toLowerCase().includes("ipad")) // ipad
-console.log('iphone', window.navigator.userAgent.toLowerCase().includes("iphone")) // iphone
-console.log('android', window.navigator.userAgent.toLowerCase().includes("android")) // andorid
