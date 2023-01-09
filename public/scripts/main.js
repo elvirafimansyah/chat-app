@@ -64,11 +64,13 @@ uploadBtn.addEventListener("change", function() {
   fileWrapper.innerHTML = "";
   const reader = new FileReader();
   reader.addEventListener("load", () => {
-    fileWrapper.style.display = "block";
     imageUpload = reader.result;
+    fileWrapper.classList.remove("hidden");
     const nameFile = this.files[0].name;
+    const flexWrap = document.createElement("div");
     const fileEl = document.createElement("div");
     const infoAlert = document.createElement("div");
+    flexWrap.classList.add("md:flex");
     infoAlert.classList.add("sm:w-1/2","md:w-3/12", "lg:w-2/5")
     fileEl.classList.add("bg-white", "rounded-lg", "m-2", "p-2", "w-3/4", "flex", "justify-center", "items-center", "text-center", "md:w-1/2");
     fileEl.innerHTML = `
@@ -78,31 +80,31 @@ uploadBtn.addEventListener("change", function() {
     </div>
     `
     infoAlert.innerHTML = `
-    <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16  top-5 " id="close_btn"><svg
+    <button class="absolute right-2 sm:right-36 md:right-24 lg:right-16 top-5 " id="close_btn"><svg
       xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-lg"
       viewBox="0 0 16 16">
       <path
         d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
     </svg></button>
-    <div class="p-4 text-sm text-teal-700 bg-teal-100 rounded-lg  ml-2 lg:mt-10 " role="alert">
+    <div class="p-4 text-sm text-teal-700 bg-teal-100 rounded-lg  ml-2 sm:mt-2 lg:mt-10 " role="alert">
       <span class="font-medium">Note: Don't upload a lot of image files There is a maximum image size that can be uploaded.
     </div>
     `
-    
+    fileWrapper.appendChild(flexWrap);
+
     if(windowSize.matches) {
-      fileWrapper.appendChild(fileEl)
-      fileWrapper.appendChild(infoAlert)
+      flexWrap.appendChild(fileEl)
+      flexWrap.appendChild(infoAlert)
     } else {
       console.log("ini di mobile")
-      fileWrapper.appendChild(infoAlert)
-      fileWrapper.appendChild(fileEl)
+      flexWrap.appendChild(infoAlert)
+      flexWrap.appendChild(fileEl)
     }
     // Close Btn Function
     const closeBtn = fileWrapper.querySelector("#close_btn");
     closeBtn.addEventListener("click", () => {
-      fileWrapper.style.display = "none"
+      fileWrapper.classList.add("hidden");
     });
-
   });
 
   reader.readAsDataURL(this.files[0])
@@ -281,6 +283,22 @@ formChat.addEventListener('submit', function (e) {
     timeStatus = "AM"
   }
 
+  if(input.value.includes("http")) {
+    const value = input.value.toString();
+    const arrValue = value.split(/\s+/);
+    const index = arrValue.findIndex(text => {
+      return text.includes('http')
+    }) 
+    let filterHttp = arrValue.filter(text => {
+      return text.includes('http')
+    }) 
+
+    filterHttp = `<a href="${filterHttp}" class="underline text-sky-500">${filterHttp}</a>`;
+    arrValue[index] = filterHttp;
+
+    input.value = arrValue.join(' ');
+  }
+
   let data = {
     name: localStorage.getItem("name"),
     message: input.value.trim(),
@@ -294,12 +312,32 @@ formChat.addEventListener('submit', function (e) {
     upload: imageUpload
   }
 
+  // if(data.message.includes("https:")) {
+  //   const text = data.message;
+  //   const wordDetails = text.split(" ");
+  //   const filterHttp = wordDetails.filter((arr) => {
+  //     return arr.includes("https:")
+  //   });
+  //   const anotherHttp = wordDetails.filter((arr) => {
+  //     return !arr.includes("https:")
+  //   })
+
+  //   const linkEl = document.createElement("a");
+  //   linkEl.href = filterHttp;
+  //   linkEl.textContent = filterHttp;
+  //   linkEl.classList.add("underline", "text-sky-500", "font-medium");
+  //   data.message = linkEl
+  //   localStorage.setItem("all_user", JSON.stringify(allUser))
+  // }
+
+
   socket.emit("message", data)
   // global data
   allUser.push(data)
   try {
     localStorage.setItem("all_user", JSON.stringify(allUser))
     saveAllMessage();
+    fileWrapper.classList.add("hidden");
   } catch(e) {
     if(e) {
       Swal.fire({
@@ -322,7 +360,7 @@ formChat.addEventListener('submit', function (e) {
     }
   }
 
-  fileWrapper.style.display = "none"
+ 
 
   window.scrollTo(0, document.body.scrollHeight);
   input.value = '';
@@ -387,7 +425,6 @@ function saveAllMessage() {
       let allMessage = document.createElement("li");
       allMessage.classList.add("chat_list");
       allMessage.innerHTML = `
-        <a href="http://youtube.com">Youtube</a>
         <div class="flex justify-between items-center " id="container_message" >
           <div class="flex items-center" data-id="${data.id}">
             <img src="${data.image}" class="w-12 h-12 mr-3 rounded-full"> 
@@ -398,8 +435,11 @@ function saveAllMessage() {
                 &nbsp;
                 <span>${data.info_time}</span>
               </div>
+
               ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
-              <p class="bg-slate-200 ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
+
+              <p class="bg-slate-200 ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2" id="message">${data.message}</p> 
+              <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
             </div> 
           <div>
           <div class="relative sm:-right-2 md:-right-4  -top-4 flex space-x-2 ">
@@ -433,7 +473,7 @@ function saveAllMessage() {
       const messageList = allMessage.querySelector("#message");
   
       messageList.contentEditable = false;
-  
+      
       containerMessage.addEventListener("mouseover",  () => {
         if(data.name === localStorage.getItem("name")) {
           deleteBtn.classList.remove("hidden");
