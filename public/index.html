@@ -166,7 +166,7 @@
             <nav class="bg-slate-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded fixed w-full top-0 right-0">
               <div class="container flex flex-wrap items-center justify-between mx-auto">
                 <div class="hidden sm:inline sm:opacity-0"></div>
-                <div class="flex items-center lg:mr-28 xl:mr-40 sm:ml-52 md:ml-36 lg:ml-0">
+                <div class="flex items-center lg:mr-28 xl:mr-40 sm:ml-52 md:ml-36 lg:ml-8">
                   <button aria-label="toggle sidebar" id="openSideBar"
                     class="h-10 w-10 bg-teal-500 sm:hidden  flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800 mr-2 sm:mr-0"
                     onclick="sidebarHandler(true)">
@@ -175,7 +175,10 @@
                         d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
                     </svg>
                   </button>
-                  <p class="display_room font-medium">Home</p>
+                    <div>
+                      <p class="display_room font-medium">#Home</p>
+                      <p class="text-sm typing_status"></p>
+                    </div>
                 </div>
                 <div class="flex sm:order-2">
                   <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false"
@@ -270,7 +273,6 @@
           <div class="fixed bottom-0 w-full bg-gray-50">
             <form  id="form_chat" class="w-full relative border-t border-slate-200">
               <div class="sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem]  w-4/5 hidden" id="file_wrapper">
-
               </div>
               <label for="chat" class="sr-only">Your message</label>
               <div class="flex items-center px-3 py-2 rounded-lg sm:relative sm:right-[-15rem] md:right-[-12rem] lg:right-[-12.5rem] xl:right-[-16.5rem] 2xl:right-[-11rem]" >

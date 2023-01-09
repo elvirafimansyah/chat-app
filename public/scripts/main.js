@@ -16,7 +16,7 @@ const clearChatBtn = document.querySelectorAll("#clear_message")
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
 let roomUser = "";
-let typing = false;
+let typing = null;
 let connected = false;
 let randomPictureArray = [
   "https://avatars.dicebear.com/api/bottts/.svg?b=%2314baa6",
@@ -110,8 +110,6 @@ uploadBtn.addEventListener("change", function() {
 
   reader.readAsDataURL(this.files[0])
 });
-
-
 
 
 formName.addEventListener("submit", (e) => {
@@ -269,10 +267,22 @@ function saveProfile() {
   }
 }
 
+const typingSEl = document.querySelector(".typing_status");
+input.addEventListener("input", () => {
+  socket.emit("typing", typing)
+  typingSEl.innerHTML = `I'm Typing`
+  if(typing) {
+    clearTimeout()
+  }
+  
+  typing = setTimeout(function() {
+    typingSEl.innerHTML = ""
+  }, 1000)
+});
+
 
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
-  console.log("submit")
   let time = new Date();
   // Random Key
   let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -282,15 +292,15 @@ formChat.addEventListener('submit', function (e) {
     let randomNumber = Math.floor(Math.random() * chars.length);
     key += chars.substring(randomNumber, randomNumber + 1);
   }
-
+  // Time Status
   let timeStatus = ""
-
   if (time.getHours() > 12) {
     timeStatus = "PM"
   } else {
     timeStatus = "AM"
   }
 
+  // Detect a Link
   if(input.value.includes("http")) {
     const value = input.value.toString();
     const arrValue = value.split(/\s+/);
@@ -307,6 +317,7 @@ formChat.addEventListener('submit', function (e) {
     input.value = arrValue.join(' ');
   }
 
+  // Send Data
   let data = {
     name: localStorage.getItem("name"),
     message: input.value.trim(),
@@ -319,7 +330,7 @@ formChat.addEventListener('submit', function (e) {
     edit: false,
     upload: imageUpload
   }
-
+  
   socket.emit("message", data)
   // global data
   allUser.push(data)
@@ -373,22 +384,6 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, key, e
   allUser.push(broadcast_data);
   localStorage.setItem("all_user", JSON.stringify(allUser))
   
-  // let broadcast = document.createElement("li");
-  // broadcast.classList.add("world");
-  // broadcast.innerHTML = `
-  // <div class="flex items-center" data-id="${id}">
-  //   <img src="${image}" class="w-12 h-12 mr-3 rounded-full"> <div>
-  //     <div class="flex items-center ">
-  //       <p class="text-lg font-medium">${name}</p>&nbsp;
-  //       <span class="text-gray-900">${hour}:${minutes}</span>
-  //       &nbsp;
-  //       <span>${info_time}</span>
-  //     </div>
-  //     <p class="bg-slate-200  rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2">${message}</p>
-  //   </div> 
-  // <div>
-  // `;
-
   saveAllMessage();
   popUpSounds("chat", "wav")
 
@@ -425,7 +420,7 @@ function saveAllMessage() {
 
               ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
 
-              <p class="${data.type !== undefined ? "bg-transparent border border-gray-300 " : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-3xl rounded-tr-3xl rounded-bl-xl p-2 break-all" id="message">${data.message}</p> 
+              <p class="${data.type !== undefined ? "bg-transparent border border-gray-300 " : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 break-all" id="message">${data.message}</p> 
               <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
             </div> 
           <div>
@@ -702,4 +697,16 @@ socket.on("delete message", (data) => {
 socket.on("edit message", (data) => {
   editMessageBroadcast(allUser, data.key, data.name, data.message, data.edit)
   console.log(data);
+});
+
+socket.on("typing", data => {
+  const isTyping = data.status
+  typingSEl.innerHTML = `${data.name} is typing...`
+  if (isTyping) {
+    clearTimeout()
+  }
+
+  isTyping = setTimeout(function() {
+    typingSEl.innerHTML = ""
+  }, 3000)
 });

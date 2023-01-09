@@ -38,6 +38,9 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key, edit, upload);
   });
 
+  socket.on("typing", (status) => {
+    socket.broadcast.emit("typing", {status: status, name: socket.username})
+  });
   // socket.on("message image", (data) => {
   //   const { name, profil, image, hour, minutes, info_time, id, key } = data;
   //   socket.broadcast.emit("message image", name, message, image, hour, minutes, info_time, id, key)
