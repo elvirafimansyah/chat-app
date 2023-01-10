@@ -17,6 +17,7 @@ const containerUser = document.getElementById("alert_notif_user");
 const notifContainer = document.getElementById("user_notifcation");
 
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
+let userList = [];
 let nameUser = "";
 let roomUser = "";
 let typing = null;
@@ -47,7 +48,6 @@ const windowsUser = window.navigator.userAgent.toLowerCase().includes("windows")
 const ipaduser = window.navigator.userAgent.toLowerCase().includes("ipad");
 const iphoneUser = window.navigator.userAgent.toLowerCase().includes("iphone");
 const androidUser = window.navigator.userAgent.toLowerCase().includes("android")
-
 
 // Preview Profile Picture 
 const preview = document.getElementById("preview-profile");
@@ -123,7 +123,9 @@ formName.addEventListener("submit", (e) => {
     
     nameUser = inputName.value.trim();
     socket.emit("sendNickname", nameUser)
-    
+    userList.push(nameUser);
+    localStorage.setItem("user_list", userList)
+
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
 
@@ -716,10 +718,6 @@ socket.on("typing", data => {
   }, 3000)
 });
 
-socket.on("signout", (data) => {
-  console.log(JSON.stringify(data));
-});
-
 socket.on("login", (data) => {
   containerUser.classList.remove("hidden");
   notifContainer.innerHTML = `
@@ -737,3 +735,15 @@ socket.on("login", (data) => {
     containerUser.classList.add("hidden"); 
   }, 4500);
 });
+
+socket.on("sendNickname", (data) => {
+  console.log(data);
+  userList.push(data);
+  localStorage.setItem("user_list", userList);
+  let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
+  const duplicateArr = [...new Set(findDuplicates(data))] 
+});
+
+if(localStorage.getItem("user_list")) {
+  console.log(localStorage.getItem("user_list"));
+}

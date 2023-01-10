@@ -15,8 +15,9 @@ io.on('connection', (socket) => {
 
   socket.on("sendNickname", (username) => {
     socket.username = username;
-    user_nickname.push(socket.username)
+    socket.broadcast.emit("sendNickname", username);
   })
+
 
   socket.on("login", (data) => {
     console.log(`${data.name} connected`)
