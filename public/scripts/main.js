@@ -11,7 +11,10 @@ const alertCopy = document.getElementById("toast-success");
 const inputRoom = document.getElementById("rooms");
 const displayRoom = document.querySelector(".display_room");
 const containerCopy = document.getElementById("containerCopy");
-const clearChatBtn = document.querySelectorAll("#clear_message")
+const clearChatBtn = document.querySelectorAll("#clear_message");
+//notif
+const containerUser = document.getElementById("alert_notif_user");
+const notifContainer = document.getElementById("user_notifcation");
 
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let nameUser = "";
@@ -39,12 +42,12 @@ let randomPictureArray = [
   "https://avatars.dicebear.com/api/bottts/rabc.svg?b=%2314baa6"
 ]
 // Device
-console.log(window.navigator.userAgent.toLowerCase())
 const windowSize  = window.matchMedia("screen and (min-width: 929px)")
 const windowsUser = window.navigator.userAgent.toLowerCase().includes("windows");
 const ipaduser = window.navigator.userAgent.toLowerCase().includes("ipad");
 const iphoneUser = window.navigator.userAgent.toLowerCase().includes("iphone");
 const androidUser = window.navigator.userAgent.toLowerCase().includes("android")
+
 
 // Preview Profile Picture 
 const preview = document.getElementById("preview-profile");
@@ -119,13 +122,14 @@ formName.addEventListener("submit", (e) => {
     homePage.classList.add("hidden");
     
     nameUser = inputName.value.trim();
-    socket.emit('login', nameUser);
     socket.emit("sendNickname", nameUser)
     
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
 
     socket.emit("join-room", roomUser);
+
+    // Random Profile User when the local image file did not fill out the profile
     if (!localStorage.getItem("src")) {
       const randomImage = randomPictureArray[Math.floor(Math.random() * randomPictureArray.length)];
       localStorage.setItem("src", randomImage)
@@ -149,6 +153,7 @@ formName.addEventListener("submit", (e) => {
   }
 });
 
+socket.emit("login", {name: localStorage.getItem("name"), profile: localStorage.getItem("src")});
 function copyText(text) {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -234,6 +239,7 @@ function profileUser() {
   function signOut() {
     console.log("click")
     localStorage.clear();
+    socket.emit("signout", "1 user has left")
     window.location.reload()
   }
 
@@ -267,16 +273,16 @@ function saveProfile() {
   }
 }
 
-const typingSEl = document.querySelector(".typing_status");
+const userStatus = document.querySelector(".user_status");
 input.addEventListener("input", () => {
   socket.emit("typing", typing)
-  typingSEl.innerHTML = `I'm Typing`
+  userStatus.innerHTML = `typing...`
   if(typing) {
     clearTimeout()
   }
   
   typing = setTimeout(function() {
-    typingSEl.innerHTML = ""
+    userStatus.innerHTML = ``
   }, 1000)
 });
 
@@ -580,10 +586,7 @@ function popUpSounds(song, type) {
 }
 
 function userJoinLeftUI(username, image, type) {
-  const containerUser = document.getElementById("alert_notif_user");
   containerUser.classList.remove("hidden");
-
-  const notifContainer = document.getElementById("user_notifcation");
   if(type) {
     notifContainer.innerHTML = `
       <div class="inline-block relative shrink-0">
@@ -665,6 +668,8 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 socket.on('add_user', (data) => {
+  userStatus.innerHTML = `${data.totalUser} participants`
+  console.log(`${data.name} and ${data.totalUser}`)
   userJoinLeftUI(data.name, data.image, true);
   popUpSounds("notif", "wav")
 });
@@ -701,12 +706,34 @@ socket.on("edit message", (data) => {
 
 socket.on("typing", data => {
   const isTyping = data.status
-  typingSEl.innerHTML = `${data.name} is typing...`
+  userStatus.innerHTML = `${data.name} is typing...`
   if (isTyping) {
     clearTimeout()
   }
 
   isTyping = setTimeout(function() {
-    typingSEl.innerHTML = ""
+    userStatus.innerHTML = ""
   }, 3000)
+});
+
+socket.on("signout", (data) => {
+  console.log(JSON.stringify(data));
+});
+
+socket.on("login", (data) => {
+  containerUser.classList.remove("hidden");
+  notifContainer.innerHTML = `
+    <div class="inline-block relative shrink-0">
+      <img class="w-12 h-12 rounded-full" src="${data.profile}" alt="${data.name} image" />
+    </div>
+    <div class="ml-3 text-sm font-normal">
+      <div class="text-sm font-semibold text-gray-900 ">${data.name}</div>
+      <div class="text-sm font-normal">connected</div>
+      <span class="text-xs font-medium text-teal-600 ">just now</span>
+    </div>
+  `
+
+  setTimeout(() => {
+    containerUser.classList.add("hidden"); 
+  }, 4500);
 });

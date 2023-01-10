@@ -12,11 +12,16 @@ let user_nickname = [];
 io.on('connection', (socket) => {
   let addedUser = false;
   console.log('a user connected');
-  
+
   socket.on("sendNickname", (username) => {
     socket.username = username;
     user_nickname.push(socket.username)
   })
+
+  socket.on("login", (data) => {
+    console.log(`${data.name} connected`)
+    socket.broadcast.emit("login", data)
+  });
 
   socket.on("sendData", (room, id) => {
     socket.userroom = room;
@@ -29,7 +34,6 @@ io.on('connection', (socket) => {
     socket.username = username;
     addedUser = true;
     totalUsers++;
-    socket.emit("login", {name: username})
     socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image });
   })
   
@@ -59,11 +63,17 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('edit message', data );
   })
 
+  socket.on("signout", (data) => {
+    if(addedUser) {
+      totalUsers--
+      socket.broadcast.emit("signout", {totalUser: totalUsers, message: data})
+    }
+  });
+
   socket.on('disconnect', () => {
-    totalUsers--;
     socket.broadcast.emit('userLeft', {
       name: socket.username, 
-      totalUser: totalUsers, 
+      // totalUser: totalUsers, 
       image: socket.image
     })
   });
