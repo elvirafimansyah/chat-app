@@ -156,9 +156,10 @@ formName.addEventListener("submit", (e) => {
   }
 });
 
-socket.emit("login", {name: localStorage.getItem("name"), profile: localStorage.getItem("src")});
+socket.emit("login", { name: localStorage.getItem("name"), profile: localStorage.getItem("src") });
 socket.emit("sendId", localStorage.getItem("id"));
-socket.emit("sendImage", localStorage.getItem('src'))
+socket.emit("sendImage", localStorage.getItem('src'));
+
 function copyText(text) {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -743,12 +744,9 @@ socket.on("sendData", (data) => {
 })
 
 socket.on("userLeft", (data) => {
-  console.log(data)
   if (data.name !== undefined) {
-    const objectWithNameAvatar = userList.findIndex((obj) => obj.name === data.name)
+    const objectWithNameAvatar = userList.findIndex((obj) => obj.name === data.name && obj.id === data.id)
     const targetObject = userList[objectWithNameAvatar];
-    console.log(targetObject)
-
     targetObject.status = false;
     localStorage.setItem("user_list", JSON.stringify(userList))
     showUserList();
