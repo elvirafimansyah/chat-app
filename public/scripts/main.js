@@ -22,22 +22,29 @@ let nameUser = "";
 let roomUser = "";
 let typing = null;
 let randomPictureArray = [
-  "https://avatars.dicebear.com/api/bottts/.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Tinkerbell&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=ffd5dc",
   "https://avatars.dicebear.com/api/bottts/a.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Ginger&backgroundColor=ffdfbf",
   "https://avatars.dicebear.com/api/bottts/youraa-.svg?b=%2314baa6",
-  "https://avatars.dicebear.com/api/bottts/1.svg?b=%2314baa6",
-  "https://avatars.dicebear.com/api/bottts/j.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Tinkerbell&backgroundColor=b6e3f4,c0aede",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Leo&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Precious&backgroundColor=d1d4f9",
   "https://avatars.dicebear.com/api/bottts/p.svg?b=%2314baa6",
-  "https://avatars.dicebear.com/api/bottts/o.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Pumpkin&backgroundColor=b6e3f4",
   "https://avatars.dicebear.com/api/bottts/r.svg?b=%2314baa6",
-  "https://avatars.dicebear.com/api/bottts/r.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Jasper&backgroundColor=c0aede",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Casper&backgroundColor=d1d4f9",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjkl.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklm.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Precious&backgroundColor=b6e3f4",
   "https://avatars.dicebear.com/api/bottts/rab.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Missy&backgroundColor=ffdfbf",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijkl.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklmop.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/e.svg?b=%2314baa6",
-  "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklmopqrstuvw.svg?b=%2314baa6",
+  "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=b6e3f4",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqr.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/rabc.svg?b=%2314baa6"
 ]
@@ -120,7 +127,8 @@ formName.addEventListener("submit", (e) => {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
 
-    nameUser = inputName.value.trim();
+    nameUser = inputName.value.split(' ').join('');
+    
     socket.emit("sendNickname", nameUser)
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
@@ -685,14 +693,17 @@ function showUserList() {
   userList = userList.filter(data => {
     return data.name !== null
   });
-
+  
   localStorage.setItem("user_list", JSON.stringify(userList))
 
-  if (localStorage.getItem("user_list")) {
-    recentUserText.forEach(el => {
+  recentUserText.forEach(el => {
+    if(localStorage.getItem("user_list").length > 2) {
       el.classList.remove("hidden");
-    })
-    userStatus.innerHTML = `${userList.map(e => e.name).join(', ')}`
+    } 
+  })
+
+  if (localStorage.getItem("user_list")) {
+    userStatus.innerHTML = `you, ${userList.map(e => e.name).join(', ')}`
     userList.forEach(data => {
       tempCard += `
         <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 " id="user_list_el">
@@ -725,8 +736,6 @@ function showUserList() {
   }
 };
 
-
-
 socket.on("userLeft", (data) => {
   if (data.name !== undefined) {
     if (data.image !== undefined) {
@@ -756,7 +765,7 @@ socket.on("typing", data => {
   }
 
   isTyping = setTimeout(function() {
-    userStatus.innerHTML = `${userList.map(e => e.name).join(', ')}`
+    userStatus.innerHTML = `you, ${userList.map(e => e.name).join(', ').toString()}`
   }, 3000)
 });
 
@@ -778,11 +787,7 @@ socket.on("login", (data) => {
     userNameListBroadcast.push(data.name)
   });
 
-  console.log("data userlist: ", userNameListBroadcast)
-  console.log("check data pernah atau belum: ", userNameListBroadcast.includes(data.name)) // true or false
-  console.log("nama barusan login: ", data.name)
-
-  if(userNameListBroadcast.includes(data.name) === false) {
+  if(userNameListBroadcast.includes(data.name) ===  false) {
     userList.push({name: data.name, image: data.profile})
     localStorage.setItem("user_list", JSON.stringify(userList))
     showUserList()
@@ -792,4 +797,3 @@ socket.on("login", (data) => {
     containerUser.classList.add("hidden"); 
   }, 4500);
 });
-
