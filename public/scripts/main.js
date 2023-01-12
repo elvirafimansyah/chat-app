@@ -341,7 +341,7 @@ formChat.addEventListener('submit', function (e) {
   allUser.push(data)
   try {
     localStorage.setItem("all_user", JSON.stringify(allUser))
-    saveAllMessage();
+    saveAllMessages();
     fileWrapper.classList.add("hidden");
   } catch(e) {
     if(e) {
@@ -389,13 +389,13 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, key, e
   allUser.push(broadcast_data);
   localStorage.setItem("all_user", JSON.stringify(allUser))
   
-  saveAllMessage();
+  saveAllMessages();
   popUpSounds("chat", "wav")
 
   window.scrollTo(0, document.body.scrollHeight);
 })
 
-function saveAllMessage() {
+function saveAllMessages() {
   messageUser.innerHTML = ""
   allUser = allUser.filter(obj => {
     return obj.message.length > 0 || obj.upload.length > 0
@@ -504,7 +504,7 @@ function saveAllMessage() {
               }
             })
             localStorage.setItem("all_user", JSON.stringify(allUser))
-            saveAllMessage()
+            saveAllMessages()
           } else if(result.isDenied) {
             allUser = allUser.filter(e => {
               if (e != data) {
@@ -513,7 +513,7 @@ function saveAllMessage() {
               socket.emit("delete message", e)
             })
             localStorage.setItem("all_user", JSON.stringify(allUser))
-            saveAllMessage()
+            saveAllMessages()
           }
         })
       });
@@ -617,7 +617,7 @@ function deleteMessageBroadcast(data, message) {
   }
 
   localStorage.setItem("all_user", JSON.stringify(allUser));
-  saveAllMessage();
+  saveAllMessages();
 
   return data;
 }
@@ -628,7 +628,7 @@ function editMessageBroadcast(data, key, name, message, edit) {
   targetObject.message = message;
   targetObject.edit = edit;
   localStorage.setItem("all_user", JSON.stringify(allUser));
-  saveAllMessage();
+  saveAllMessages();
   return data;
 }
 
@@ -659,7 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
   showUserList()
   if(localStorage.getItem("all_user") ) {
-    saveAllMessage()
+    saveAllMessages()
     window.scrollTo(0, document.body.scrollHeight);
   } 
 })
@@ -682,13 +682,18 @@ const containerUserList = document.querySelectorAll("#container_user");
 const recentUserText = document.querySelectorAll("#recent_user");
 function showUserList() {
   let tempCard = ""
+  userList = userList.filter(data => {
+    return data.name !== null
+  });
+
+  localStorage.setItem("user_list", JSON.stringify(userList))
+
   if (localStorage.getItem("user_list")) {
     recentUserText.forEach(el => {
       el.classList.remove("hidden");
     })
     userStatus.innerHTML = `${userList.map(e => e.name).join(', ')}`
-    const data = JSON.parse(localStorage.getItem("user_list"));
-    data.forEach(data => {
+    userList.forEach(data => {
       tempCard += `
         <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 " id="user_list_el">
           <a href="#" class="flex items-center px-4 py-2 ">
