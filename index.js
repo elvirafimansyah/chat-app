@@ -29,12 +29,12 @@ io.on('connection', (socket) => {
     socket.emit("sendData", {room: socket.room, id: socket.userid});
   });
 
-  socket.on('add_user', (username, image) => {
+  socket.on('add_user', (username, image, status) => {
     socket.image = image;
     socket.username = username;
     addedUser = true;
     totalUsers++;
-    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image });
+    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image, status: status });
   })
   
   socket.on('message', (data) => {

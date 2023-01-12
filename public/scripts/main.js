@@ -28,18 +28,14 @@ let randomPictureArray = [
   "https://api.dicebear.com/5.x/bottts/svg?seed=Tinkerbell&backgroundColor=b6e3f4,c0aede",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Leo&backgroundColor=ffd5dc",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Precious&backgroundColor=d1d4f9",
-  "https://avatars.dicebear.com/api/bottts/p.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=b6e3f4",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Pumpkin&backgroundColor=b6e3f4",
-  "https://avatars.dicebear.com/api/bottts/r.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Jasper&backgroundColor=c0aede",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Casper&backgroundColor=d1d4f9",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjkl.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklm.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Precious&backgroundColor=b6e3f4",
-  "https://avatars.dicebear.com/api/bottts/rab.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Missy&backgroundColor=ffdfbf",
-  "https://avatars.dicebear.com/api/bottts/rabcdefghijkl.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqrstuwfwjklmop.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/e.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=b6e3f4",
@@ -120,7 +116,7 @@ uploadBtn.addEventListener("change", function() {
 
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
-  if (inputName.value !== "" & inputName.value.length <= 17  ) {
+  if (inputName.value !== "" & inputName.value.length <= 16  ) {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
 
@@ -138,7 +134,7 @@ formName.addEventListener("submit", (e) => {
       localStorage.setItem("src", randomImage)
     } 
     
-    socket.emit('add_user', nameUser, localStorage.getItem("src"));
+    socket.emit('add_user', nameUser, localStorage.getItem("src"), true);
     profileUser()
     showUserList()
   } else{
@@ -208,7 +204,7 @@ function profileUser() {
       <img src="${profileData.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
       <div>
         <div class="flex items-center">
-          <p class="self-center whitespace-nowrap text-lg font-medium  inline-block whitespace-pre-line">${profileData.name}</p>&nbsp;${windowsUser ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a" class="bi bi-laptop" viewBox="0 0 16 16">
+          <p class="self-center whitespace-nowrap text-sm  font-medium  inline-block whitespace-pre-line">${profileData.name}</p>&nbsp;${windowsUser ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a" class="bi bi-laptop" viewBox="0 0 16 16">
             <path d="M13.5 3a.5.5 0 0 1 .5.5V11H2V3.5a.5.5 0 0 1 .5-.5h11zm-11-1A1.5 1.5 0 0 0 1 3.5V12h14V3.5A1.5 1.5 0 0 0 13.5 2h-11zM0 12.5h16a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5z"/>
                 </svg>` :  `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a" class="bi bi-tablet-landscape" viewBox="0 0 16 16">
                 <path d="M1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4zm-1 8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8z"/>
@@ -241,7 +237,6 @@ function profileUser() {
   const signOutBtnMobile = document.querySelector(".signout_mobile_btn");
 
   function signOut() {
-    console.log("click")
     localStorage.clear();
     socket.emit("signout", "1 user has left")
     window.location.reload()
@@ -660,7 +655,6 @@ clearChatBtn.forEach(btn => {
 })
 
 document.addEventListener("DOMContentLoaded", () => {
-  
   saveProfile();
   showUserList()
   if(localStorage.getItem("all_user") ) {
@@ -690,7 +684,13 @@ function showUserList() {
   userList = userList.filter(data => {
     return data.name !== null
   });
-  
+
+  userList = userList.slice(0).sort(function(a,b){
+    const x = a.name.toLowerCase()
+    const y = b.name.toLowerCase()
+    return x < y ? -1 : x > y ? 1 : 0
+  })
+
   localStorage.setItem("user_list", JSON.stringify(userList))
 
   recentUserText.forEach(el => {
@@ -703,14 +703,12 @@ function showUserList() {
     userStatus.innerHTML = `you, ${userList.map(e => e.name).join(', ')}`
     userList.forEach(data => {
       tempCard += `
-        <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 " id="user_list_el">
-          <a href="#" class="flex items-center px-4 py-2 ">
-            <div class="relative inline-block shrink-0">
-              <img class="w-6 h-6 mr-2 rounded-full" src="${data.image}" alt="${data.name}">
-              <span class="absolute bottom-0 right-2 inline-flex items-center justify-center w-2 h-2 bg-rounded-full"></span>
-            </div>
-            ${data.name}
-          </a>
+        <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 flex items-center p-2 " id="user_list_el">
+          <div class="relative inline-block shrink-0">
+            <img class="w-7 h-7 mr-2 rounded-full" src="${data.image}" alt="${data.name}">
+            <span class="absolute bottom-0 right-2 inline-flex items-center ${data.status ? "bg-green-500" : "border-2 border-gray-500 bg-gray-300" } justify-center w-2 h-2 rounded-full"></span>
+          </div>
+          ${data.name}
         </li>
       `
     });
@@ -727,14 +725,17 @@ function showUserList() {
           el.classList.remove("bg-slate-200")
         })
       });
-
-      console.log(userListEl)
     })
   }
 };
 
 socket.on("userLeft", (data) => {
   if (data.name !== undefined) {
+    const objectWithNameAvatar = userList.findIndex((obj) => obj.name === data.name)
+    const targetObject = userList[objectWithNameAvatar];
+    targetObject.status = false;
+    localStorage.setItem("user_list", JSON.stringify(userList))
+    showUserList();
     if (data.image !== undefined) {
       userJoinLeftUI(data.name, data.image, false);
       popUpSounds("notif", "wav")
@@ -767,26 +768,12 @@ socket.on("typing", data => {
 });
 
 socket.on("login", (data) => {
-  containerUser.classList.remove("hidden");
-  notifContainer.innerHTML = `
-    <div class="inline-block relative shrink-0">
-      <img class="w-12 h-12 rounded-full" src="${data.profile}" alt="${data.name} image" />
-    </div>
-    <div class="ml-3 text-sm font-normal">
-      <div class="text-sm font-semibold text-gray-900 ">${data.name}</div>
-      <div class="text-sm font-normal">connected</div>
-      <span class="text-xs font-medium text-teal-600 ">just now</span>
-    </div>
-  `
-
   let userNameListBroadcast = [];
   let profileListBroadcast = []
   userList.forEach(data => {
     userNameListBroadcast.push(data.name)
     profileListBroadcast.push(data.image)
-    
   });
-
 
   if(userNameListBroadcast.includes(data.name) ===  false) {
     userList.push({name: data.name, image: data.profile})
@@ -797,7 +784,12 @@ socket.on("login", (data) => {
     localStorage.setItem("user_list", JSON.stringify(userList))
     showUserList()
   }
-  
+
+  const objectWithNameAvatar = userList.findIndex((obj) => obj.name === data.name)
+  const targetObject = userList[objectWithNameAvatar];
+  targetObject.status = true
+  localStorage.setItem("user_list", JSON.stringify(userList))
+  showUserList();
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
   }, 4500);
