@@ -24,9 +24,7 @@ let typing = null;
 let randomPictureArray = [
   "https://api.dicebear.com/5.x/bottts/svg?seed=Tinkerbell&backgroundColor=ffd5dc",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=ffd5dc",
-  "https://avatars.dicebear.com/api/bottts/a.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Ginger&backgroundColor=ffdfbf",
-  "https://avatars.dicebear.com/api/bottts/youraa-.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Tinkerbell&backgroundColor=b6e3f4,c0aede",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Leo&backgroundColor=ffd5dc",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Precious&backgroundColor=d1d4f9",
@@ -46,7 +44,6 @@ let randomPictureArray = [
   "https://avatars.dicebear.com/api/bottts/e.svg?b=%2314baa6",
   "https://api.dicebear.com/5.x/bottts/svg?seed=Miss%20kitty&backgroundColor=b6e3f4",
   "https://avatars.dicebear.com/api/bottts/rabcdefghijklopqrstuvwjklopqr.svg?b=%2314baa6",
-  "https://avatars.dicebear.com/api/bottts/rabc.svg?b=%2314baa6"
 ]
 // Device
 const windowSize  = window.matchMedia("screen and (min-width: 929px)")
@@ -783,15 +780,23 @@ socket.on("login", (data) => {
   `
 
   let userNameListBroadcast = [];
+  let profileListBroadcast = []
   userList.forEach(data => {
     userNameListBroadcast.push(data.name)
+    profileListBroadcast.push(data.image)
+    
   });
+
 
   if(userNameListBroadcast.includes(data.name) ===  false) {
     userList.push({name: data.name, image: data.profile})
     localStorage.setItem("user_list", JSON.stringify(userList))
     showUserList()
-  };
+  } else if(userNameListBroadcast.includes(data.name) === true && profileListBroadcast.includes(data.profile) === false) {
+    userList.push({ name: data.name, image: data.profile })
+    localStorage.setItem("user_list", JSON.stringify(userList))
+    showUserList()
+  }
   
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
