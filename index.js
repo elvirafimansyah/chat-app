@@ -7,7 +7,6 @@ const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 let totalUsers = 0;
-let user_nickname = [];
 
 io.on('connection', (socket) => {
   let addedUser = false;
@@ -18,23 +17,29 @@ io.on('connection', (socket) => {
     socket.broadcast.emit("sendNickname", username);
   })
 
+  socket.on("sendId", (userid) => {
+    socket.userid = userid
+  });
+  
+  socket.on("sendImage", (image) => {
+    socket.image = image
+  })
+
   socket.on("login", (data) => {
     console.log(`${data.name} connected`)
     socket.broadcast.emit("login", data)
   });
 
   socket.on("sendData", (room, id) => {
-    socket.userroom = room;
     socket.userid = id;
     socket.emit("sendData", {room: socket.room, id: socket.userid});
   });
 
-  socket.on('add_user', (username, image, status) => {
-    socket.image = image;
+  socket.on('add_user', (username, image, status, id) => {
     socket.username = username;
     addedUser = true;
     totalUsers++;
-    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image, status: status });
+    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image, status: status, id: id });
   })
   
   socket.on('message', (data) => {
@@ -73,6 +78,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     socket.broadcast.emit('userLeft', {
       name: socket.username, 
+      id: socket.userid,
       // totalUser: totalUsers, 
       image: socket.image
     })

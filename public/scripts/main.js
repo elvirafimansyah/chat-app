@@ -20,6 +20,7 @@ let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
 let userList = JSON.parse(localStorage.getItem("user_list")) || [];
 let nameUser = "";
 let roomUser = "";
+let userID = "";
 let typing = null;
 let randomPictureArray = [
   "https://api.dicebear.com/5.x/bottts/svg?seed=Tinkerbell&backgroundColor=ffd5dc",
@@ -121,11 +122,13 @@ formName.addEventListener("submit", (e) => {
     homePage.classList.add("hidden");
 
     nameUser = inputName.value.split(' ').join('');
+    userID = socket.id
+    localStorage.setItem("name", nameUser)
+    localStorage.setItem("id", userID);
     
     socket.emit("sendNickname", nameUser)
-    localStorage.setItem("name", nameUser)
-    localStorage.setItem("id", socket.id);
-    
+  
+
     socket.emit("join-room", roomUser);
     
     // Random Profile User when the local image file did not fill out the profile
@@ -134,7 +137,7 @@ formName.addEventListener("submit", (e) => {
       localStorage.setItem("src", randomImage)
     } 
     
-    socket.emit('add_user', nameUser, localStorage.getItem("src"), true);
+    socket.emit('add_user', nameUser, localStorage.getItem("src"), true, localStorage.getItem("id"));
     profileUser()
     showUserList()
   } else{
@@ -154,6 +157,8 @@ formName.addEventListener("submit", (e) => {
 });
 
 socket.emit("login", {name: localStorage.getItem("name"), profile: localStorage.getItem("src")});
+socket.emit("sendId", localStorage.getItem("id"));
+socket.emit("sendImage", localStorage.getItem('src'))
 function copyText(text) {
   const div = document.createElement("div");
   div.innerHTML = `
@@ -238,7 +243,6 @@ function profileUser() {
 
   function signOut() {
     localStorage.clear();
-    socket.emit("signout", "1 user has left")
     window.location.reload()
   }
 
@@ -285,6 +289,14 @@ input.addEventListener("input", () => {
   }, 1000)
 });
 
+function generateKey(el) {
+  let chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let keyLength = 4;
+  for (let i = 0; i <= keyLength; i++) {
+    let randomNumber = Math.floor(Math.random() * chars.length);
+    el += chars.substring(randomNumber, randomNumber + 1);
+  }
+};
 
 formChat.addEventListener('submit', function (e) {
   e.preventDefault();
@@ -369,6 +381,7 @@ formChat.addEventListener('submit', function (e) {
   input.value = '';
   imageUpload = "";
 });
+
 
 socket.on("message", (name, message, image, hour, minutes, info_time, id, key, edit, upload) => {
   let broadcast_data = {
@@ -654,6 +667,58 @@ clearChatBtn.forEach(btn => {
   });
 })
 
+const containerUserList = document.querySelectorAll("#container_user");
+const recentUserText = document.querySelectorAll("#recent_user");
+function showUserList() {
+  let tempCard = ""
+  userList = userList.filter(data => {
+    return data.name !== null
+  });
+
+  userList = userList.slice(0).sort(function (a, b) {
+    const x = a.name.toLowerCase()
+    const y = b.name.toLowerCase()
+    return x < y ? -1 : x > y ? 1 : 0
+  })
+
+  localStorage.setItem("user_list", JSON.stringify(userList))
+
+  recentUserText.forEach(el => {
+    if (localStorage.getItem("user_list").length > 2) {
+      el.classList.remove("hidden");
+    }
+  })
+
+  if (localStorage.getItem("user_list")) {
+    userStatus.innerHTML = `you, ${userList.map(e => e.name).join(', ')}`
+    userList.forEach(data => {
+      tempCard += `
+        <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 flex items-center p-2 " id="user_list_el">
+          <div class="relative inline-block shrink-0">
+            <img class="w-7 h-7 mr-2 rounded-full" src="${data.image}" alt="${data.name}">
+            <span class="absolute bottom-0 right-2 inline-flex items-center ${data.status ? "bg-green-500" : "border-2 border-gray-500 bg-gray-300"} justify-center w-2 h-2 rounded-full"></span>
+          </div>
+          ${data.name}
+        </li>
+      `
+    });
+
+    containerUserList.forEach(wrapper => {
+      wrapper.innerHTML = tempCard
+      const userListEl = wrapper.querySelectorAll("#user_list_el");
+      userListEl.forEach(el => {
+        el.addEventListener("mouseenter", (e) => {
+          el.classList.add("bg-slate-200")
+        });
+
+        el.addEventListener("mouseleave", () => {
+          el.classList.remove("bg-slate-200")
+        })
+      });
+    })
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   saveProfile();
   showUserList()
@@ -677,72 +742,20 @@ socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
 
-const containerUserList = document.querySelectorAll("#container_user");
-const recentUserText = document.querySelectorAll("#recent_user");
-function showUserList() {
-  let tempCard = ""
-  userList = userList.filter(data => {
-    return data.name !== null
-  });
-
-  userList = userList.slice(0).sort(function(a,b){
-    const x = a.name.toLowerCase()
-    const y = b.name.toLowerCase()
-    return x < y ? -1 : x > y ? 1 : 0
-  })
-
-  localStorage.setItem("user_list", JSON.stringify(userList))
-
-  recentUserText.forEach(el => {
-    if(localStorage.getItem("user_list").length > 2) {
-      el.classList.remove("hidden");
-    } 
-  })
-
-  if (localStorage.getItem("user_list")) {
-    userStatus.innerHTML = `you, ${userList.map(e => e.name).join(', ')}`
-    userList.forEach(data => {
-      tempCard += `
-        <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 flex items-center p-2 " id="user_list_el">
-          <div class="relative inline-block shrink-0">
-            <img class="w-7 h-7 mr-2 rounded-full" src="${data.image}" alt="${data.name}">
-            <span class="absolute bottom-0 right-2 inline-flex items-center ${data.status ? "bg-green-500" : "border-2 border-gray-500 bg-gray-300" } justify-center w-2 h-2 rounded-full"></span>
-          </div>
-          ${data.name}
-        </li>
-      `
-    });
-
-    containerUserList.forEach(wrapper => {
-      wrapper.innerHTML = tempCard
-      const userListEl = wrapper.querySelectorAll("#user_list_el");
-      userListEl.forEach(el => {
-        el.addEventListener("mouseenter", (e) => {
-          el.classList.add("bg-slate-200")
-        });
-
-        el.addEventListener("mouseleave", () => {
-          el.classList.remove("bg-slate-200")
-        })
-      });
-    })
-  }
-};
-
 socket.on("userLeft", (data) => {
+  console.log(data)
   if (data.name !== undefined) {
     const objectWithNameAvatar = userList.findIndex((obj) => obj.name === data.name)
     const targetObject = userList[objectWithNameAvatar];
+    console.log(targetObject)
+
     targetObject.status = false;
     localStorage.setItem("user_list", JSON.stringify(userList))
     showUserList();
     if (data.image !== undefined) {
       userJoinLeftUI(data.name, data.image, false);
       popUpSounds("notif", "wav")
-    } else {
-      popUpSounds("notif", "wav")
-      userJoinLeftUI(data.name, `${broadcast_profile}`, false)
-    }
+    } 
   }
 });
 
@@ -794,3 +807,4 @@ socket.on("login", (data) => {
     containerUser.classList.add("hidden"); 
   }, 4500);
 });
+
