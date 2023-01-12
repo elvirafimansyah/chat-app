@@ -18,7 +18,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit("sendNickname", username);
   })
 
-
   socket.on("login", (data) => {
     console.log(`${data.name} connected`)
     socket.broadcast.emit("login", data)

@@ -87,7 +87,7 @@
                 <img src="assets/chat.png" class="w-10 h-10 m-2" alt="logo">&nbsp;
                 <span class="self-center text-xl font-bold whitespace-nowrap ">Emore Chat</span>
               </a>
-              <ul class="mt-4">
+              <ul class="mt-4 ">
                 <div class="flex justify-center mb-4 w-full">
                   <div class="relative">
                     <div class="text-gray-800 absolute ml-4 inset-0 m-auto w-4 h-4">
@@ -104,37 +104,19 @@
                       type="text" placeholder="Search Room" id="search_room_input"/>
                   </div>
                 </div>
-                <li>
-                  <a href="javascript:void(0)" class="flex w-full justify-between cursor-pointer sm:bg-slate-200 sm:rounded-md font-medium cursor-pointer items-center mb-6 p-3">
+                <li class=" border-gray-300">
+                  <a href="javascript:void(0)" class="flex w-full justify-between cursor-pointer sm:bg-slate-200 sm:rounded-md font-medium cursor-pointer items-center mb-3 p-3">
                     <span class="text-sm ml-2">Home</span>
                   </a>
                 </li>
+                <li class="border-t border-gray-300 hidden" id="recent_user">
+                  <div class="flex flex-row items-center h-8">
+                    <div class="text-sm  tracking-wide ">Recent User</div>
+                  </div>
+                </li>
                 <li>
-                  <ul class="h-48 py-1 overflow-y-auto text-gray-700 " aria-labelledby="dropdownUsersButton">
-                    <li>
-                      <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100 ">
-                        <img class="w-6 h-6 mr-2 rounded-full" src="" alt="Jese image">
-                        Jese Leos
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100 ">
-                        <img class="w-6 h-6 mr-2 rounded-full" src="" alt="Jese image">
-                        Robert Gough
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100 ">
-                        <img class="w-6 h-6 mr-2 rounded-full" src="" alt="Jese image">
-                        Bonnie Green
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-100 ">
-                        <img class="w-6 h-6 mr-2 rounded-full" src="" alt="Jese image">
-                        Leslie Livingston
-                      </a>
-                    </li>
+                  <ul class="h-52 py-1 overflow-y-auto text-gray-700  rounded-md" id="container_user">
+                    
                   </ul>
                 </li>
                 <li class="absolute bottom-5 right-0 left-0 mx-4 ">
@@ -183,6 +165,16 @@
                     <span class="text-sm ml-2">Home</span>
                   </a>
                 </li>
+                <li class="border-t border-gray-300 " id="recent_user">
+                  <div class="flex flex-row items-center h-8">
+                    <div class="text-sm  tracking-wide ">Recent User</div>
+                  </div>
+                </li>
+                <li>
+                  <ul class="h-48 py-1 overflow-y-auto text-gray-700" id="container_user">
+                
+                  </ul>
+                </li>
               </ul>
             </div>
           </div>
@@ -205,7 +197,7 @@
                   </button>
                     <div>
                       <p class="display_room font-medium antialiased">#Home</p>
-                      <p class="text-sm user_status text-gray-700 antialiased "></p>
+                      <p class="text-sm user_status text-gray-700 antialiased">you</p>
                     </div>
                 </div>
                 <div class="flex sm:order-2">

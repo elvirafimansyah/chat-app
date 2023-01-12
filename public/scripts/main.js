@@ -17,11 +17,10 @@ const containerUser = document.getElementById("alert_notif_user");
 const notifContainer = document.getElementById("user_notifcation");
 
 let allUser = JSON.parse(localStorage.getItem("all_user")) || [];
-let userList = [];
+let userList = JSON.parse(localStorage.getItem("user_list")) || [];
 let nameUser = "";
 let roomUser = "";
 let typing = null;
-let connected = false;
 let randomPictureArray = [
   "https://avatars.dicebear.com/api/bottts/.svg?b=%2314baa6",
   "https://avatars.dicebear.com/api/bottts/a.svg?b=%2314baa6",
@@ -120,25 +119,23 @@ formName.addEventListener("submit", (e) => {
   if (inputName.value !== "" & inputName.value.length <= 17  ) {
     chatPage.classList.remove("hidden");
     homePage.classList.add("hidden");
-    
+
     nameUser = inputName.value.trim();
     socket.emit("sendNickname", nameUser)
-    userList.push(nameUser);
-    localStorage.setItem("user_list", userList)
-
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", socket.id);
-
+    
     socket.emit("join-room", roomUser);
-
+    
     // Random Profile User when the local image file did not fill out the profile
     if (!localStorage.getItem("src")) {
       const randomImage = randomPictureArray[Math.floor(Math.random() * randomPictureArray.length)];
       localStorage.setItem("src", randomImage)
     } 
-
+    
     socket.emit('add_user', nameUser, localStorage.getItem("src"));
     profileUser()
+    showUserList()
   } else{
     Swal.fire({
       icon: 'error',
@@ -284,7 +281,7 @@ input.addEventListener("input", () => {
   }
   
   typing = setTimeout(function() {
-    userStatus.innerHTML = ``
+    userStatus.innerHTML = `${userList.map(e => e.name).join(', ')}`
   }, 1000)
 });
 
@@ -396,10 +393,6 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, key, e
   popUpSounds("chat", "wav")
 
   window.scrollTo(0, document.body.scrollHeight);
-})
-
-socket.on("private message", (name, message, image, hour, minutes, info_time, id) => {
-  console.log(name, message, image, hour, minutes, info_time, id);
 })
 
 function saveAllMessage() {
@@ -662,28 +655,72 @@ clearChatBtn.forEach(btn => {
 })
 
 document.addEventListener("DOMContentLoaded", () => {
+  
   saveProfile();
+  showUserList()
   if(localStorage.getItem("all_user") ) {
     saveAllMessage()
     window.scrollTo(0, document.body.scrollHeight);
   } 
 })
 
+let broadcast_profile = "";
 socket.on('add_user', (data) => {
-  userStatus.innerHTML = `${data.totalUser} participants`
-  console.log(`${data.name} and ${data.totalUser}`)
+  userList.push(data);
+  localStorage.setItem("user_list", JSON.stringify(userList))
+  showUserList()
   userJoinLeftUI(data.name, data.image, true);
   popUpSounds("notif", "wav")
+  broadcast_profile = data.image;
 });
 
 socket.on("sendData", (data) => {
   console.log(JSON.stringify(data));
 })
 
-let broadcast_profile = "";
-socket.on("add_user", (data) => {
-  broadcast_profile = data.image;
-})
+const containerUserList = document.querySelectorAll("#container_user");
+const recentUserText = document.querySelectorAll("#recent_user");
+function showUserList() {
+  let tempCard = ""
+  if (localStorage.getItem("user_list")) {
+    recentUserText.forEach(el => {
+      el.classList.remove("hidden");
+    })
+    userStatus.innerHTML = `${userList.map(e => e.name).join(', ')}`
+    const data = JSON.parse(localStorage.getItem("user_list"));
+    data.forEach(data => {
+      tempCard += `
+        <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 " id="user_list_el">
+          <a href="#" class="flex items-center px-4 py-2 ">
+            <div class="relative inline-block shrink-0">
+              <img class="w-6 h-6 mr-2 rounded-full" src="${data.image}" alt="${data.name}">
+              <span class="absolute bottom-0 right-2 inline-flex items-center justify-center w-2 h-2 bg-rounded-full"></span>
+            </div>
+            ${data.name}
+          </a>
+        </li>
+      `
+    });
+
+    containerUserList.forEach(wrapper => {
+      wrapper.innerHTML = tempCard
+      const userListEl = wrapper.querySelectorAll("#user_list_el");
+      userListEl.forEach(el => {
+        el.addEventListener("mouseenter", (e) => {
+          el.classList.add("bg-slate-200")
+        });
+
+        el.addEventListener("mouseleave", () => {
+          el.classList.remove("bg-slate-200")
+        })
+      });
+
+      console.log(userListEl)
+    })
+  }
+};
+
+
 
 socket.on("userLeft", (data) => {
   if (data.name !== undefined) {
@@ -707,14 +744,14 @@ socket.on("edit message", (data) => {
 });
 
 socket.on("typing", data => {
-  const isTyping = data.status
+  let isTyping = data.status
   userStatus.innerHTML = `${data.name} is typing...`
   if (isTyping) {
     clearTimeout()
   }
 
   isTyping = setTimeout(function() {
-    userStatus.innerHTML = ""
+    userStatus.innerHTML = `${userList.map(e => e.name).join(', ')}`
   }, 3000)
 });
 
@@ -731,19 +768,23 @@ socket.on("login", (data) => {
     </div>
   `
 
+  let userNameListBroadcast = [];
+  userList.forEach(data => {
+    userNameListBroadcast.push(data.name)
+  });
+
+  console.log("data userlist: ", userNameListBroadcast)
+  console.log("check data pernah atau belum: ", userNameListBroadcast.includes(data.name)) // true or false
+  console.log("nama barusan login: ", data.name)
+
+  if(userNameListBroadcast.includes(data.name) === false) {
+    userList.push({name: data.name, image: data.profile})
+    localStorage.setItem("user_list", JSON.stringify(userList))
+    showUserList()
+  };
+  
   setTimeout(() => {
     containerUser.classList.add("hidden"); 
   }, 4500);
 });
 
-socket.on("sendNickname", (data) => {
-  console.log(data);
-  userList.push(data);
-  localStorage.setItem("user_list", userList);
-  let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
-  const duplicateArr = [...new Set(findDuplicates(data))] 
-});
-
-if(localStorage.getItem("user_list")) {
-  console.log(localStorage.getItem("user_list"));
-}
