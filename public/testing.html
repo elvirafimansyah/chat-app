@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Contact Form Template</title>
+  <link rel="stylesheet" href="/build/tailwind.css" type="text/css" media="screen" title="no title" charset="utf-8" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="block bg-white shadow-lg rounded-lg h-screen">
-    <div class="lg:flex lg:flex-wrap g-0 h-full">
-      <div class="lg:w-6/12 px-4 md:px-0">
-        <div class="md:p-12 md:mx-6">
-          <div class="w-full max-w-md space-y-8 ">
-            <div class="text-center">
+<body class>
+  <div class="lg:flex">
+    <div class="lg:w-1/2 xl:max-w-screen-sm">
+      <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
+          <div class="w-full max-w-md space-y-8">
+            <div>
               <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#0d9488"
                 class="bi bi-chat-dots-fill mx-auto h-12 w-auto" viewBox="0 0 16 16">
                 <path
@@ -75,19 +74,16 @@
               </div>
             </form>
           </div>
-        </div>
       </div>
-      <div class="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none" style="
-                    background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
-                  ">
-        <div class="text-white px-4 py-6 md:p-12 md:mx-6">
-          <h4 class="text-xl font-semibold mb-6">We are more than just a company</h4>
-          <p class="text-sm">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat.
-          </p>
+    </div>
+    <img src="./assets/dot.png" class="absolute -z-2 lg:right-[40%] xl:right-1/2 bottom-0 w-36 hidden lg:flex">
+    <div class="hidden lg:flex items-center justify-center bg-slate-100 flex-1 h-screen">
+      <img src="./assets/dot.png" class="absolute -z-2 w-40 top-0 right-0">
+      <div class="max-w-md cursor-pointer">
+        <div class="relative">
+          <img src="assets/chatui.png" class="rounded-md w-92" alt="chat image">
+          <img src="assets/chatbox.png" class="absolute top-40 w-3/4 left-1/2 z-10" alt="chat text box">
+          <img src="assets/user.png"  class="absolute top-52 w-1/2 -left-24 z-10" alt="user box">
         </div>
       </div>
     </div>
