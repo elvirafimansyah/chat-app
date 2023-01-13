@@ -114,6 +114,12 @@ uploadBtn.addEventListener("change", function() {
   reader.readAsDataURL(this.files[0])
 });
 
+const adminAccountBtn = document.querySelector(".admin_btn");
+const passwordWrapper = document.getElementById("password_wrapper");
+const passwordInput = document.getElementById("password");
+adminAccountBtn.addEventListener("click", () => {
+  passwordWrapper.classList.remove("hidden")
+});
 
 formName.addEventListener("submit", (e) => {
   e.preventDefault()
@@ -126,9 +132,12 @@ formName.addEventListener("submit", (e) => {
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", userID);
     
+    if(inputName.value == "Emore" && passwordInput.input == 'mouserexus') {
+      console.log(true);
+    } else {
+      console.log("knap?")
+    }
     socket.emit("sendNickname", nameUser)
-  
-
     socket.emit("join-room", roomUser);
     
     // Random Profile User when the local image file did not fill out the profile
@@ -572,19 +581,21 @@ function saveAllMessages() {
 
   // Search Filter Message Function
   const containerMessage = document.querySelectorAll("#container_message"); 
-  const searchInput = document.querySelector("#search-navbar");
-  searchInput.addEventListener("keyup", function (event) {
-    const keyword = event.target.value.toLowerCase();
-    containerMessage.forEach((row) => {
-      const title = row.querySelector("#message");
-      const status = title.textContent.toLowerCase().startsWith(keyword);
-      if (status) {
-        row.style.display = "block";
-      } else {
-        row.style.display = "none"
-      }
-    })
-  });
+  const searchInput = document.querySelectorAll("#search-navbar");
+  searchInput.forEach(input => {
+    input.addEventListener("keyup", function (event) {
+      const keyword = event.target.value.toLowerCase();
+      containerMessage.forEach((row) => {
+        const title = row.querySelector("#message");
+        const status = title.textContent.toLowerCase().startsWith(keyword);
+        if (status) {
+          row.style.display = "block";
+        } else {
+          row.style.display = "none"
+        }
+      })
+    });
+  })
 
   window.scrollTo(0, document.body.scrollHeight);
 }
