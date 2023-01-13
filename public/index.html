@@ -22,7 +22,22 @@
   </script>
 </head>
 <body>
-  <div id="home_page"class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div id="home_page"class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8 isolate">
+    <div class="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]">
+      <svg
+        class="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-20rem)] sm:h-[42.375rem]"
+        viewBox="0 0 1155 678" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="url(#45de2b6b-92d5-4d68-a6a0-9b9b2abad533)" fill-opacity=".3"
+          d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z" />
+        <defs>
+          <linearGradient id="45de2b6b-92d5-4d68-a6a0-9b9b2abad533" x1="1155.49" x2="-78.208" y1=".177" y2="474.645"
+            gradientUnits="userSpaceOnUse">
+            <stop stop-color="#d1fae5"></stop>
+            <stop offset="1" stop-color="#ccfbf1"></stop>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
     <div class="w-full max-w-md space-y-8">
       <div>
         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#0d9488" class="bi bi-chat-dots-fill mx-auto h-12 w-auto"
@@ -31,11 +46,11 @@
             d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
         </svg>
         <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Emore Chat</h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          real time chat app based on socket
+        <p class="mt-2 text-center text-sm text-gray-800">
+          Real Time Chat App based on Socket
         </p>
       </div>
-      <form class="mt-8 space-y-6" id="form_name">
+      <form class="mt-8 space-y-4" id="form_name">
         <input type="hidden" name="remember" value="true">
         <div class="-space-y-px rounded-md shadow-sm  ">
           <div class="flex items-center mb-2 justify-center ">
@@ -60,6 +75,12 @@
                 class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
                 placeholder="Nickname">
             </div>
+            <div class="hidden">
+              <label for="password" class="sr-only">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required
+                class="relative block w-full appearance-none rounded-none border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10  focus:border-teal-500 focus:outline-none focus:ring-teal-500 sm:text-sm"
+                placeholder="Password">
+            </div>
             <div>
               <label for="room" class="sr-only">Room</label>
               <input id="rooms" name="room" type="text" autocomplete="current-room" 
@@ -67,6 +88,9 @@
                 placeholder="Room" >
             </div>
           </div>
+        </div>
+        <div class="text-sm">
+          <a href="javascript:void(0)" class="font-medium text-teal-600 hover:text-teal-500 flex justify-end">Admin Account</a>
         </div>
         <div>
           <button type="submit" id="btn-name"
