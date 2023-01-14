@@ -333,9 +333,10 @@ formChat.addEventListener('submit', function (e) {
   }
 
   // Detect a Link
+  let inputDetect = input.value.toString();
+  let arrValue = inputDetect.split(/\s+/);
+  console.log(arrValue)
   if(input.value.includes("http")) {
-    const value = input.value.toString();
-    const arrValue = value.split(/\s+/);
     const index = arrValue.findIndex(text => {
       return text.includes('http')
     }) 
@@ -343,10 +344,36 @@ formChat.addEventListener('submit', function (e) {
       return text.includes('http')
     }) 
 
-    filterHttp = `<a href="${filterHttp}" class="underline text-sky-500 font-medium">${filterHttp}</a>`;
-    arrValue[index] = filterHttp;
+    if(filterHttp.length > 1) {
+      const indMutiple = arrValue.reduce(function (r, v, i) {
+        return r.concat(v.includes("http") ? i : []);
+      }, []);
 
-    input.value = arrValue.join(' ');
+      filterHttp.forEach((arr, indx) => {
+        arr = `<a href="${arr}" target="blank" class="underline text-sky-500 font-medium">${arr}</a>` 
+        indMutiple.forEach(num => {
+          arrValue[num] = arr
+        });
+        input.value = arrValue.join(' ')
+      });
+    } else {
+      filterHttp = `<a href="${filterHttp}" target="blank" class="underline text-sky-500 font-medium">${filterHttp}</a>`;
+      arrValue[index] = filterHttp;
+      input.value = arrValue.join(' ');
+    }
+    
+  }  else if(input.value.includes("@")) {
+    const index = arrValue.findIndex(text => {
+      return text.includes('@')
+    }) 
+    let filterTag = arrValue.filter(text => {
+      return text.includes('@')
+    }) 
+    console.log(filterTag)
+
+    filterTag = `<span class="font-bold text-teal-500">${filterTag}</span>`
+
+    console.log('iy ada')
   }
 
   // Send Data
@@ -454,7 +481,7 @@ function saveAllMessages() {
 
               ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
 
-              <p class="${data.type !== undefined ? `bg-transparent  ${data.admin === "true" ? "border-2 border-teal-500" : "border border-gray-300"} ` : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 break-all" id="message">${data.message}</p> 
+              <p class="${data.type !== undefined ? `bg-transparent  ${data.admin === "true" ? "border-2 border-teal-500" : "border border-gray-300"} ` : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 break-all" id="message">${data.message} </p> 
               <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
             </div> 
           <div>

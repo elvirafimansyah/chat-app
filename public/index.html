@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Socket io chat</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Flowbite -->
   <link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" />
@@ -143,7 +144,6 @@
                 </li>
                 <li>
                   <ul class="h-52 py-1 overflow-y-auto text-gray-700  rounded-md" id="container_user">
-                    
                   </ul>
                 </li>
                 <li class="absolute bottom-5 right-0 left-0 mx-4 ">
@@ -213,7 +213,7 @@
             <nav class="bg-slate-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded fixed w-full top-0 right-0">
               <div class="container flex flex-wrap items-center justify-between mx-auto">
                 <div class="hidden sm:inline sm:opacity-0"></div>
-                <div class="flex items-center lg:mr-28 xl:mr-40 sm:ml-52 md:ml-36 lg:ml-8">
+                <div class="flex items-center lg:mr-28 xl:mr-40 sm:ml-52 md:ml-44 lg:ml-28 xl:ml-8">
                   <button aria-label="toggle sidebar" id="openSideBar"
                     class="h-10 w-10 bg-teal-500 sm:hidden  flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800 mr-2 sm:mr-0"
                     onclick="sidebarHandler(true)">
@@ -224,7 +224,7 @@
                   </button>
                     <div>
                       <p class="display_room font-medium antialiased">#Home</p>
-                      <p class="text-sm user_status text-gray-700 antialiased w-20 sm:w-36 md:w-40 lg:w-36 overflow-hidden text-ellipsis whitespace-nowrap">you</p>
+                      <p class="text-sm user_status text-gray-700 antialiased w-20 sm:w-28 md:w-20 lg:w-28 overflow-hidden text-ellipsis whitespace-nowrap">you</p>
                     </div>
                 </div>
                 <div class="flex sm:order-2">
