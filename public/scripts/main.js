@@ -148,7 +148,7 @@ formName.addEventListener("submit", (e) => {
       localStorage.setItem("src", randomImage)
     } 
     
-    socket.emit('add_user', nameUser, localStorage.getItem("src"), true, localStorage.getItem("id"));
+    socket.emit('add_user', nameUser, localStorage.getItem("src"), true, localStorage.getItem("id"), localStorage.getItem("admin"));
     profileUser()
     showUserList()
   } else{
@@ -170,6 +170,7 @@ formName.addEventListener("submit", (e) => {
 socket.emit("login", { name: localStorage.getItem("name"), profile: localStorage.getItem("src") });
 socket.emit("sendId", localStorage.getItem("id"));
 socket.emit("sendImage", localStorage.getItem('src'));
+socket.emit("sendAdmin", localStorage.getItem("admin"))
 
 function copyText(text) {
   const div = document.createElement("div");
@@ -335,7 +336,6 @@ formChat.addEventListener('submit', function (e) {
   // Detect a Link
   let inputDetect = input.value.toString();
   let arrValue = inputDetect.split(/\s+/);
-  console.log(arrValue)
   if(input.value.includes("http")) {
     const index = arrValue.findIndex(text => {
       return text.includes('http')
@@ -343,13 +343,12 @@ formChat.addEventListener('submit', function (e) {
     let filterHttp = arrValue.filter(text => {
       return text.includes('http')
     }) 
-
     if(filterHttp.length > 1) {
       const indMutiple = arrValue.reduce(function (r, v, i) {
         return r.concat(v.includes("http") ? i : []);
       }, []);
 
-      filterHttp.forEach((arr, indx) => {
+      filterHttp.forEach((arr,) => {
         arr = `<a href="${arr}" target="blank" class="underline text-sky-500 font-medium">${arr}</a>` 
         indMutiple.forEach(num => {
           arrValue[num] = arr
@@ -361,19 +360,31 @@ formChat.addEventListener('submit', function (e) {
       arrValue[index] = filterHttp;
       input.value = arrValue.join(' ');
     }
-    
-  }  else if(input.value.includes("@")) {
+  } else if(input.value.includes("@")) {
     const index = arrValue.findIndex(text => {
       return text.includes('@')
     }) 
     let filterTag = arrValue.filter(text => {
       return text.includes('@')
-    }) 
+    })
     console.log(filterTag)
+    if (filterTag.length > 1) {
+      const indMutiple = arrValue.reduce(function (r, v, i) {
+        return r.concat(v.includes("@") ? i : []);
+      }, []);
 
-    filterTag = `<span class="font-bold text-teal-500">${filterTag}</span>`
-
-    console.log('iy ada')
+      filterTag.forEach((arr,) => {
+        arr = `<span class="font-bold text-teal-500">${arr}</span>`
+        indMutiple.forEach(num => {
+          arrValue[num] = arr
+        });
+        input.value = arrValue.join(' ')
+      });
+    }  else {
+      filterTag = `<span class="font-bold text-teal-500">${filterTag}</span>`
+      arrValue[index] = filterTag;
+      input.value = arrValue.join(' ')
+    }
   }
 
   // Send Data
@@ -481,7 +492,7 @@ function saveAllMessages() {
 
               ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
 
-              <p class="${data.type !== undefined ? `bg-transparent  ${data.admin === "true" ? "border-2 border-teal-500" : "border border-gray-300"} ` : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 break-all" id="message">${data.message} </p> 
+              <p class="${data.type !== undefined ? `bg-transparent  ${data.admin === "true" ? "border-2 border-teal-500" : "border border-gray-300"} ` : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 " id="message" style="word-break: break-word;">${data.message} </p> 
               <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
             </div> 
           <div>
@@ -642,12 +653,13 @@ function popUpSounds(song, type) {
   audio.play()
 }
 
-function userJoinLeftUI(username, image, type) {
+function userJoinLeftUI(username, admin, image, type) {
+  console.log(admin)
   containerUser.classList.remove("hidden");
   if(type) {
     notifContainer.innerHTML = `
       <div class="inline-block relative shrink-0">
-        <img class="w-12 h-12 rounded-full" src="${image}" alt="${username} image" />
+        <img class="w-12 h-12 rounded-full" src="${admin === "true" ? 'assets/profile.png' : image}" alt="${username} image" />
       </div>
       <div class="ml-3 text-sm font-normal">
         <div class="text-sm font-semibold text-gray-900 ">${username}</div>
@@ -744,7 +756,7 @@ function showUserList() {
       tempCard += `
         <li class="sm:rounded-md font-medium cursor-pointer items-center mb-3 flex items-center p-2 " id="user_list_el">
           <div class="relative inline-block shrink-0">
-            <img class="w-7 h-7 mr-2 rounded-full" src="${data.image}" alt="${data.name}">
+            <img class="w-7 h-7 mr-2 rounded-full" src="${data.admin === "true" ? "assets/profile.png" : data.image}" alt="${data.name}">
             <span class="absolute bottom-0 right-2 inline-flex items-center ${data.status ? "bg-green-500" : "border-2 border-gray-500 bg-gray-300"} justify-center w-2 h-2 rounded-full"></span>
           </div>
           ${data.name}
@@ -782,7 +794,7 @@ socket.on('add_user', (data) => {
   userList.push(data);
   localStorage.setItem("user_list", JSON.stringify(userList))
   showUserList()
-  userJoinLeftUI(data.name, data.image, true);
+  userJoinLeftUI(data.name, data.admin, data.image, true);
   popUpSounds("notif", "wav")
   broadcast_profile = data.image;
 });
@@ -799,7 +811,7 @@ socket.on("userLeft", (data) => {
     localStorage.setItem("user_list", JSON.stringify(userList))
     showUserList();
     if (data.image !== undefined) {
-      userJoinLeftUI(data.name, data.image, false);
+      userJoinLeftUI(data.name, data.admin, data.image, false );
       popUpSounds("notif", "wav")
     } 
   }

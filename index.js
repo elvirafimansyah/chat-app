@@ -25,6 +25,10 @@ io.on('connection', (socket) => {
     socket.image = image
   })
 
+  socket.on("sendAdmin", admin => {
+    socket.admin = admin
+  });
+
   socket.on("login", (data) => {
     console.log(`${data.name} connected`)
     socket.broadcast.emit("login", data)
@@ -35,11 +39,11 @@ io.on('connection', (socket) => {
     socket.emit("sendData", {room: socket.room, id: socket.userid});
   });
 
-  socket.on('add_user', (username, image, status, id) => {
+  socket.on('add_user', (username, image, status, id, admin) => {
     socket.username = username;
     addedUser = true;
     totalUsers++;
-    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image, status: status, id: id });
+    socket.broadcast.emit("add_user", { name: username, totalUser: totalUsers, image: image, status: status, id: id, admin: admin });
   })
   
   socket.on('message', (data) => {
@@ -80,7 +84,8 @@ io.on('connection', (socket) => {
       name: socket.username, 
       id: socket.userid,
       // totalUser: totalUsers, 
-      image: socket.image
+      image: socket.image,
+      admin: socket.admin
     })
   });
 });
