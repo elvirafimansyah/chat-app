@@ -132,10 +132,12 @@ formName.addEventListener("submit", (e) => {
     localStorage.setItem("name", nameUser)
     localStorage.setItem("id", userID);
     
-    if(inputName.value == "Emore" && passwordInput.input == 'mouserexus') {
+    // Admin Style
+    if(inputName.value == "Emore" && passwordInput.value == 'mouserexus') {
+      localStorage.setItem("admin", true)
       console.log(true);
-    } else {
-      console.log("knap?")
+    }  else {
+      localStorage.setItem("admin", false)
     }
     socket.emit("sendNickname", nameUser)
     socket.emit("join-room", roomUser);
@@ -216,15 +218,18 @@ function profileUser() {
   }
   const userProfileUI =  `
     <div class="flex items-center">
-      <img src="${profileData.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
+      <img src="${localStorage.getItem("admin") === "true" ? "assets/profile.png" : profileData.image}" class="rounded-full w-10 h-10 mr-2 border border-teal-500" alt="logo">&nbsp;
       <div>
         <div class="flex items-center">
-          <p class="self-center whitespace-nowrap text-sm  font-medium  inline-block whitespace-pre-line">${profileData.name}</p>&nbsp;${windowsUser ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a" class="bi bi-laptop" viewBox="0 0 16 16">
+          <p class="self-center whitespace-nowrap text-sm  font-medium  inline-block whitespace-pre-line">${profileData.name}</p>&nbsp;
+          ${localStorage.getItem("admin") === "true" ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#14b8a6" class="bi bi-patch-check-fill " viewBox="0 0 16 16">
+            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
+          </svg>`: windowsUser ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a" class="bi bi-laptop" viewBox="0 0 16 16">
             <path d="M13.5 3a.5.5 0 0 1 .5.5V11H2V3.5a.5.5 0 0 1 .5-.5h11zm-11-1A1.5 1.5 0 0 0 1 3.5V12h14V3.5A1.5 1.5 0 0 0 13.5 2h-11zM0 12.5h16a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5z"/>
                 </svg>` :  `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#16a34a" class="bi bi-tablet-landscape" viewBox="0 0 16 16">
                 <path d="M1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4zm-1 8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8z"/>
                 <path d="M14 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"/>
-              </svg>`}
+          </svg>`}
         </div>
         <p class="text-xs text-slate-800 id_text hover:cursor-pointer break-all" title="id">${profileData.id}</p>
       </div>
@@ -242,7 +247,7 @@ function profileUser() {
   const profileID = document.querySelector("#profile_id");
   function mobileUserProfile(name, image, id) {
     name.innerHTML = profileData.name;
-    image.src = profileData.image;
+    image.src = localStorage.getItem("admin") === "true" ? "assets/profile.png" : profileData.image;
     id.innerHTML = profileData.id;
   }
   mobileUserProfile(document.querySelector("#profile_name"), document.querySelector("#profile_img"), profileID)
@@ -348,14 +353,15 @@ formChat.addEventListener('submit', function (e) {
   let data = {
     name: localStorage.getItem("name"),
     message: input.value.trim(),
-    image: localStorage.getItem("src"),
+    image: localStorage.getItem("admin") === "true" ? "assets/profile.png" : localStorage.getItem("src"),
     hour: time.getHours(),
     minutes: time.getMinutes(),
     info_time: timeStatus,
     id: localStorage.getItem("id"),
     key: key,
     edit: false,
-    upload: imageUpload
+    upload: imageUpload,
+    admin: localStorage.getItem("admin")
   }
   
   socket.emit("message", data)
@@ -393,7 +399,7 @@ formChat.addEventListener('submit', function (e) {
 });
 
 
-socket.on("message", (name, message, image, hour, minutes, info_time, id, key, edit, upload) => {
+socket.on("message", (name, message, image, hour, minutes, info_time, id, key, edit, upload, admin) => {
   let broadcast_data = {
     name: name,
     message: message,
@@ -405,7 +411,8 @@ socket.on("message", (name, message, image, hour, minutes, info_time, id, key, e
     type: "broadcast",
     key: key,
     edit: edit,
-    upload: upload
+    upload: upload,
+    admin: admin
   }
 
   // global data
@@ -437,6 +444,9 @@ function saveAllMessages() {
             <div>
               <div class="flex items-center ">
                 <p class="text-lg font-medium">${data.name}</p>&nbsp;
+                ${data.admin === "true" ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#14b8a6" class="bi bi-patch-check-fill " viewBox="0 0 16 16">
+                  <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z"/>
+                </svg>`: ""} &nbsp;
                 <span class="text-gray-900">${data.hour}:${data.minutes}</span>
                 &nbsp;
                 <span>${data.info_time}</span>

@@ -43,8 +43,8 @@ io.on('connection', (socket) => {
   })
   
   socket.on('message', (data) => {
-    const { name, message, image, hour,  minutes, info_time, id, key, edit, upload } = data;
-    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key, edit, upload);
+    const { name, message, image, hour,  minutes, info_time, id, key, edit, upload, admin} = data;
+    socket.broadcast.emit('message', name, message, image, hour, minutes, info_time, id, key, edit, upload, admin);
   });
 
   socket.on("typing", (status) => {
