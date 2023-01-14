@@ -454,7 +454,7 @@ function saveAllMessages() {
 
               ${data.upload.length > 0 ? `<img src="${data.upload}" class="w-60 image_list"> ` : ""}
 
-              <p class="${data.type !== undefined ? "bg-transparent border border-gray-300 " : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 break-all" id="message">${data.message}</p> 
+              <p class="${data.type !== undefined ? `bg-transparent  ${data.admin === "true" ? "border-2 border-teal-500" : "border border-gray-300"} ` : "bg-slate-200"} ${data.upload.length > 0 ? `mt-2` : ""} ${data.message.length > 0 ? "" : "hidden"} rounded-br-lg rounded-tr-lg rounded-bl-lg p-2 break-all" id="message">${data.message}</p> 
               <span class="text-sm text-gray-700 ${data.edit ? null : "hidden"} edited_text">&nbsp;(edited)&nbsp;</span>
             </div> 
           <div>
