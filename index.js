@@ -54,15 +54,6 @@ io.on('connection', (socket) => {
   socket.on("typing", (status) => {
     socket.broadcast.emit("typing", {status: status, name: socket.username})
   });
-  // socket.on("message image", (data) => {
-  //   const { name, profil, image, hour, minutes, info_time, id, key } = data;
-  //   socket.broadcast.emit("message image", name, message, image, hour, minutes, info_time, id, key)
-  // });
-
-  // socket.on("join-room", room => {
-  //   socket.join(room);
-  //   console.log(room);
-  // }); 
 
   socket.on('delete message', function (messageId) {
     socket.broadcast.emit('delete message', messageId);
