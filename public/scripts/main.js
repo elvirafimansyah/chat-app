@@ -1,4 +1,4 @@
-var socket = io("https://chat-app-phi-rosy.vercel.app/");
+var socket = io("https://chat-app-phi-rosy.vercel.app/", { transports: ['polling'] });
 var formChat = document.getElementById('form_chat');
 var input = document.getElementById('chat');
 var messageUser = document.getElementById("messages");
