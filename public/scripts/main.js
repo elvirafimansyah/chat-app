@@ -1,4 +1,4 @@
-var socket = io('https://chat-app-production.up.railway.app/', { transports: ['polling'] });
+var socket = io('https://chat-app-production.up.railway.app/');
 var formChat = document.getElementById('form_chat');
 var input = document.getElementById('chat');
 var messageUser = document.getElementById("messages");
