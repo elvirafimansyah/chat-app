@@ -81,6 +81,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(process.env.PORT, () => {
-  console.log('Server listening at port %d', process.env.PORT);
+server.listen(port, () => {
+  console.log('Server listening at port %d', port);
 });
