@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Socket io chat</title>
+  <title>Emore Chat</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Flowbite -->
   <link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" />
   <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
+  <link rel="icon" type="image/png" href="assets/chat.png">
   <script>
     tailwind.config = {
       theme: {
@@ -21,14 +22,13 @@
       }
     }
   </script>
-
 </head>
 <body>
   <div id="home_page">
     <div class="lg:flex">
       <div class="lg:w-1/2 xl:max-w-screen-sm">
         <div class="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
-          <div class="w-full max-w-md space-y-8">
+          <div class="w-full max-w-md space-y-8 ">
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#0d9488"
                 class="bi bi-chat-dots-fill mx-auto h-12 w-auto" viewBox="0 0 16 16">
@@ -36,8 +36,8 @@
                   d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
               </svg>
               <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Emore Chat</h2>
-              <p class="mt-2 text-center text-sm text-gray-800">
-                Real Time Chat App based on socket
+              <p class="mt-2 text-center  text-gray-600">
+                FREE messaging app with many features 
               </p>
             </div>
             <form class="mt-8 space-y-4" id="form_name">
@@ -91,13 +91,18 @@
               </div>
             </form>
           </div>
+          <footer class="absolute bottom-10 font-medium text-sm text-teal-600 ">
+            Copyright © 2022 Emore Chat. Made By <a href="https://github.com/elvirafimansyah" target="blank">Elvira. F</a>
+          </footer>
         </div>
       </div>
       <img src="./assets/dot.png" class="absolute -z-2 lg:right-[40%] xl:right-1/2 bottom-0 w-36 hidden lg:flex">
       <div class="hidden lg:flex items-center justify-center bg-slate-100 flex-1 h-screen">
         <img src="./assets/dot.png" class="absolute -z-2 w-40 top-0 right-0">
-        <div class="max-w-md cursor-pointer">
-          <div class="relative">
+        <div class="max-w-md">
+          <h1 class="text-3xl text-center  font-bold"><span class="underline underline-offset-3 decoration-7 decoration-teal-500 ">simple</span>, <span class="underline underline-offset-3 decoration-7 decoration-teal-500">fast</span>, <span class="underline underline-offset-3 decoration-7 decoration-teal-500">secure</span>, and <span class="underline underline-offset-3 decoration-7 decoration-teal-500">responsive</span> across all your devices</h1>
+          <br>
+          <div class="relative  cursor-pointer">
             <img src="assets/chatui.png" class="rounded-md w-92" alt="chat image">
             <img src="assets/chatbox.png" class="absolute top-40 w-3/4 left-1/2 z-10" alt="chat text box">
             <img src="assets/user.png" class="absolute top-52 w-1/2 -left-24 z-10" alt="user box">
