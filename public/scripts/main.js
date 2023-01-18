@@ -1,4 +1,4 @@
-var socket = io('emorechat.up.railway.app');
+var socket = io('https://emorechat.up.railway.app/');
 var formChat = document.getElementById('form_chat');
 var input = document.getElementById('chat');
 var messageUser = document.getElementById("messages");
